@@ -1,8 +1,16 @@
 "use strict";
 
+const { emit } = require("process");
+
 const app = require("express")();
-const http = require("http").createServer(app);
-const io = require("socket.io")(http);
+app.set("view engine", "pug");
+
+const server = require("http").Server(app);
+const io = require("socket.io")(server);
+
+app.get("/", (req, res) => {
+  res.render("index.pug");
+});
 
 const connectedMotoboys = {};
 const pendingRaces = [];
@@ -54,10 +62,12 @@ setInterval(function () {
     )
       delete connectedMotoboys[motoBoy];
   }
-
-  //if (Object.keys(connectedMotoboys).length > 0) emitConnectedMotoboys();
 }, 3600000);
 
-http.listen(3000, () => {
-  console.log("listening on *:3000");
-});
+if (module === require.main) {
+  const PORT = process.env.PORT || 8080;
+  server.listen(PORT, () => {
+    console.log(`App listening on port ${PORT}`);
+    console.log("Press Ctrl+C to quit.");
+  });
+}
