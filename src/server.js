@@ -19,6 +19,10 @@ mongoose.connect(
 
 app.use(express.json());
 
+app.get("/", (req, res) => {
+  return res.json("Olá");
+});
+
 app.use("/files", express.static(path.resolve(__dirname, "..", "uploads")));
 
 app.use(routes);

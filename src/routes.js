@@ -9,11 +9,6 @@ const routes = express.Router();
 
 const upload = multer(uploadConfig);
 
-// index
-routes.get("/", (req, res) => {
-  return res.json("Olá");
-});
-
 // Motoboy
 routes.post("/motoboy/create", upload.single("file"), MotoboyController.create);
 routes.post("/motoboy/updatelocation", MotoboyController.updateLocation);
