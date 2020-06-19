@@ -27,4 +27,11 @@ app.use("/files", express.static(path.resolve(__dirname, "..", "uploads")));
 
 app.use(routes);
 
-server.listen(3333);
+let port = process.env.PORT;
+if (port == null || port == "") {
+  port = 3333;
+}
+
+server.listen(port, function () {
+  console.log(`Server started Successfully on port ${port}`);
+});
