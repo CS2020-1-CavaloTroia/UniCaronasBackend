@@ -46,6 +46,11 @@ routes.get(
   verifyJWT,
   MotoboyController.getOnlineMotoboys
 );
+routes.post(
+  "/motoboy/subscribeToNotifications",
+  verifyJWT,
+  MotoboyController.setFirebaseNotificationToken
+);
 
 // Company
 routes.get("/company/get", verifyJWT, CompanyController.showAll);

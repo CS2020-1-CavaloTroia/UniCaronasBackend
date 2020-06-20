@@ -42,6 +42,20 @@ module.exports = {
     }
   },
 
+  async setFirebaseNotificationToken(request, response) {
+    const { firebaseNotificationToken, _id } = request.body;
+
+    try {
+      const motoboy = await Motoboy.updateOne(
+        { _id },
+        { firebaseNotificationToken }
+      );
+      return response.json(motoboy);
+    } catch (err) {
+      return response.status(500);
+    }
+  },
+
   async updateLocation(request, response) {
     const { _id, latitude, longitude, heading } = request.body;
 
