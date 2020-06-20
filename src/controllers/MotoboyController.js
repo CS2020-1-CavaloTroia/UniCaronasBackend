@@ -1,24 +1,26 @@
 const Motoboy = require("./../models/Motoboy");
-const { update } = require("./../models/Motoboy");
 
 module.exports = {
   async create(request, response) {
-    const thumbnail = request.file.filename;
-    const { name, phoneNumber } = request.body;
+    // const thumbnail = request.file.filename;
+    const { name, phoneNumber, googleUID } = request.body;
 
     try {
       const motoboy = await Motoboy.create({
-        thumbnail,
+        googleUID,
         name,
         phoneNumber,
       });
 
       return response.json(motoboy);
     } catch (err) {
-      if (err.code === 11000)
-        return response.status(404).send("User already exists!");
+      if (err.code === 11000) {
+        const motoboy = await Motoboy.findOne({ phoneNumber, googleUID });
 
-      return response.json(err);
+        if (motoboy !== null) return response.json(motoboy);
+        // User unauthorized
+        else return response.status(401).json("User unauthorized");
+      }
     }
   },
 

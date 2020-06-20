@@ -1,3 +1,3 @@
-return {
-  baseURL: "http://localhost:3333",
+module.exports = {
+  baseURL: "http://192.168.2.186:3333",
 };

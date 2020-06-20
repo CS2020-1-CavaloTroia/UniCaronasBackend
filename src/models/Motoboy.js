@@ -1,14 +1,16 @@
 const mongoose = require("mongoose");
-const urls = require("./../config/urls");
 
 const MotoboySchema = new mongoose.Schema(
   {
     thumbnail: String,
+    googleUID: String,
     name: String,
     phoneNumber: { type: String, unique: true, index: true, required: true },
     online: Boolean,
     latitude: Number,
     longitude: Number,
+    heading: Number,
+    firebaseNotificationToken: String,
   },
   {
     toJSON: {
@@ -18,6 +20,8 @@ const MotoboySchema = new mongoose.Schema(
 );
 
 MotoboySchema.virtual("thumbnail_url").get(function () {
+  if (this.thumbnail === undefined) return null;
+
   return `localhost:3333/files/${this.thumbnail}`;
 });
 
