@@ -17,7 +17,7 @@ module.exports = {
 
       const _id = motoboy._id;
 
-      const token = jwt.sign({ _id }, process.env.SECRET);
+      const token = jwt.sign({ _id }, "@SUDDEN#1012platform");
 
       return response.json({ ...motoboy, token });
     } catch (err) {
@@ -27,7 +27,7 @@ module.exports = {
         if (motoboy !== null) {
           const _id = motoboy._id;
 
-          const token = jwt.sign({ _id }, process.env.SECRET);
+          const token = jwt.sign({ _id }, "@SUDDEN#1012platform");
 
           const formattedMotoboy = { ...motoboy._doc };
           formattedMotoboy.token = token;

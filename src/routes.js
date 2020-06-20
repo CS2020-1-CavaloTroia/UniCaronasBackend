@@ -11,7 +11,7 @@ const verifyJWT = (req, res, next) => {
       .status(401)
       .json({ auth: false, message: "User not unauthorized" });
 
-  jwt.verify(token, process.env.SECRET, function (err, decoded) {
+  jwt.verify(token, "@SUDDEN#1012platform", function (err, decoded) {
     if (err)
       return res
         .status(401)
