@@ -1,4 +1,3 @@
-require("dotenv-safe").config();
 var jwt = require("jsonwebtoken");
 const Motoboy = require("./../models/Motoboy");
 
@@ -19,7 +18,10 @@ module.exports = {
 
       const token = jwt.sign({ _id }, "@SUDDEN#1012platform");
 
-      return response.json({ ...motoboy, token });
+      const formattedMotoboy = { ...motoboy._doc };
+      formattedMotoboy.token = token;
+
+      return response.json(formattedMotoboy);
     } catch (err) {
       if (err.code === 11000) {
         const motoboy = await Motoboy.findOne({ phoneNumber, googleUID });

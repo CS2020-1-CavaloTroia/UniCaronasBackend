@@ -1,7 +1,6 @@
 const express = require("express");
 const multer = require("multer");
 const uploadConfig = require("./config/upload");
-require("dotenv-safe").config();
 var jwt = require("jsonwebtoken");
 
 const verifyJWT = (req, res, next) => {
