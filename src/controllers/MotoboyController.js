@@ -10,6 +10,7 @@ module.exports = {
         googleUID,
         name,
         phoneNumber,
+        firebaseNotificationToken: "",
       });
 
       return response.json(motoboy);
