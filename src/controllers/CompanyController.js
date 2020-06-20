@@ -15,6 +15,7 @@ module.exports = {
       thumbnail,
       name,
       phoneNumber,
+      firebaseNotificationToken: "",
     });
 
     return response.json(company);
