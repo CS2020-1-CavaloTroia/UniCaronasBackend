@@ -1,7 +1,9 @@
+require("dotenv-safe").config();
+var jwt = require("jsonwebtoken");
 const Motoboy = require("./../models/Motoboy");
 
 module.exports = {
-  async create(request, response) {
+  async signin(request, response) {
     // const thumbnail = request.file.filename;
     const { name, phoneNumber, googleUID } = request.body;
 
@@ -13,14 +15,27 @@ module.exports = {
         firebaseNotificationToken: "",
       });
 
-      return response.json(motoboy);
+      const _id = motoboy._id;
+
+      const token = jwt.sign({ _id }, process.env.SECRET);
+
+      return response.json({ ...motoboy, token });
     } catch (err) {
       if (err.code === 11000) {
         const motoboy = await Motoboy.findOne({ phoneNumber, googleUID });
 
-        if (motoboy !== null) return response.json(motoboy);
+        if (motoboy !== null) {
+          const _id = motoboy._id;
+
+          const token = jwt.sign({ _id }, process.env.SECRET);
+
+          const formattedMotoboy = { ...motoboy._doc };
+          formattedMotoboy.token = token;
+
+          return response.json(formattedMotoboy);
+        }
         // User unauthorized
-        else return response.status(401).json("User unauthorized");
+        else return response.status(401).json("User authenticated");
       }
     }
   },
