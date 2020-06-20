@@ -50,7 +50,7 @@ module.exports = {
         { _id },
         { firebaseNotificationToken }
       );
-      return response.json(motoboy);
+      return response.json(firebaseNotificationToken);
     } catch (err) {
       return response.status(500);
     }
