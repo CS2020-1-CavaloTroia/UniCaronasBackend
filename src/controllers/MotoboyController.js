@@ -39,6 +39,8 @@ module.exports = {
         // User unauthorized
         else return response.status(401).json("User authenticated");
       }
+
+      return response.status(500).json("Internal server error");
     }
   },
 

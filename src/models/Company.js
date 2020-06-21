@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const urls = require("./../config/urls");
+const { baseURL } = require("../config/urls");
 
 const CompanySchema = new mongoose.Schema(
   {
@@ -7,7 +7,8 @@ const CompanySchema = new mongoose.Schema(
     googleUID: String,
     name: String,
     phoneNumber: { type: String, unique: true, index: true, required: true },
-    address: Object,
+    latitude: Number,
+    longitude: Number,
     firebaseNotificationToken: String,
   },
   {
@@ -20,7 +21,7 @@ const CompanySchema = new mongoose.Schema(
 CompanySchema.virtual("thumbnail_url").get(function () {
   if (this.thumbnail === undefined) return null;
 
-  return `localhost:3333/files/${this.thumbnail}`;
+  return `${baseURL}/files/${this.thumbnail}`;
 });
 
 module.exports = mongoose.model("Company", CompanySchema);

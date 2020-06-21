@@ -53,12 +53,6 @@ routes.post(
 );
 
 // Company
-routes.get("/company/get", verifyJWT, CompanyController.showAll);
-routes.post(
-  "/company/create",
-  verifyJWT,
-  upload.single("file"),
-  CompanyController.create
-);
+routes.post("/company/signin", upload.single("file"), CompanyController.signin);
 
 module.exports = routes;
