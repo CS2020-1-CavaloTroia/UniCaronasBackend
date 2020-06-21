@@ -5,6 +5,7 @@ const RaceSchema = new mongoose.Schema({
   motoboyId: String,
   initialLocation: Object,
   finalLocation: Object,
+  address: String,
   route: Array,
   status: String, // "awaiting" "inProgress" "finished" "cancelByMotoboy" "cancelByCompany" "cancelByClient"
   initiated_at: Number,

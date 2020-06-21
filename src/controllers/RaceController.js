@@ -8,6 +8,7 @@ module.exports = {
       finalLocation,
       route,
       initiated_at,
+      address,
     } = request.body;
 
     try {
@@ -18,6 +19,7 @@ module.exports = {
         route,
         status: "awaiting",
         initiated_at,
+        address,
       });
       return response.json(race);
     } catch (err) {
