@@ -1,5 +1,6 @@
 var jwt = require("jsonwebtoken");
 const Company = require("./../models/Company");
+const Race = require("../models/Race");
 
 module.exports = {
   async signin(request, response) {
@@ -40,6 +41,17 @@ module.exports = {
       }
 
       return response.status(500).json("Internal server error");
+    }
+  },
+
+  async getRaces(request, response) {
+    const { companyId } = request.body;
+
+    try {
+      const myRaces = await Race.find({ companyId });
+      return response.json(myRaces);
+    } catch (err) {
+      return response.status(500);
     }
   },
 };

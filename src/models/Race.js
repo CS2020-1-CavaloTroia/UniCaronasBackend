@@ -1,16 +1,14 @@
 const mongoose = require("mongoose");
-const urls = require("./../config/urls");
-
-var Schema = mongoose.Schema,
-  ObjectId = Schema.ObjectId;
 
 const RaceSchema = new mongoose.Schema({
-  clientId: ObjectId,
-  companyId: ObjectId,
-  motoboyID: ObjectId,
+  companyId: String,
+  motoboyId: String,
   initialLocation: Object,
   finalLocation: Object,
-  status: String,
+  route: Array,
+  status: String, // "awaiting" "inProgress" "finished" "cancelByMotoboy" "cancelByCompany" "cancelByClient"
+  initiated_at: Number,
+  finished_at: Number,
 });
 
 module.exports = mongoose.model("Race", RaceSchema);

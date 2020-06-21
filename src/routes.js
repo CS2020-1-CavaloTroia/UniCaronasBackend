@@ -24,6 +24,7 @@ const verifyJWT = (req, res, next) => {
 
 const MotoboyController = require("./controllers/MotoboyController");
 const CompanyController = require("./controllers/CompanyController");
+const RaceController = require("./controllers/RaceController");
 
 const routes = express.Router();
 
@@ -54,5 +55,9 @@ routes.post(
 
 // Company
 routes.post("/company/signin", upload.single("file"), CompanyController.signin);
+routes.post("/company/races", verifyJWT, CompanyController.getRaces);
+
+// Routes
+routes.post("/race/create", verifyJWT, RaceController.create);
 
 module.exports = routes;
