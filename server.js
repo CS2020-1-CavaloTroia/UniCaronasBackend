@@ -9,7 +9,7 @@ const app = express();
 const server = http.Server(app);
 
 mongoose.connect(
-  "mongodb://suddenmotoboy:sudden1012@geonosis.mongodb.umbler.com:44593/sudden?authSource=sudden",
+  "mongodb+srv://sudden:suden1012jipa@cluster0-lq2a6.gcp.mongodb.net/sudden?retryWrites=true&w=majority",
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,
