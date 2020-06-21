@@ -48,8 +48,20 @@ module.exports = {
     const { companyId } = request.body;
 
     try {
-      const myRaces = await Race.find({ companyId });
-      return response.json(myRaces);
+      const myRacesInProgress = await Race.find({
+        companyId,
+        status: "inProgress",
+      });
+
+      const myRacesAwaiting = await Race.find({
+        companyId,
+        status: "awaiting",
+      });
+
+      return response.json({
+        inProgress: myRacesInProgress,
+        awaiting: myRacesAwaiting,
+      });
     } catch (err) {
       return response.status(500);
     }
