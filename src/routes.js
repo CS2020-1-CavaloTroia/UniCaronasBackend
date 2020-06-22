@@ -60,5 +60,6 @@ routes.post("/company/races", verifyJWT, CompanyController.getRaces);
 
 // Routes
 routes.post("/race/create", verifyJWT, RaceController.create);
+routes.post("/race/start", verifyJWT, RaceController.startRace);
 
 module.exports = routes;

@@ -1,4 +1,4 @@
-const Races = require("./../models/Race");
+const Race = require("./../models/Race");
 
 module.exports = {
   async create(request, response) {
@@ -12,7 +12,7 @@ module.exports = {
     } = request.body;
 
     try {
-      const race = await Races.create({
+      const race = await Race.create({
         companyId,
         initialLocation,
         finalLocation,
@@ -22,6 +22,23 @@ module.exports = {
         address,
       });
       return response.json(race);
+    } catch (err) {
+      return response.status(500);
+    }
+  },
+
+  async startRace(request, response) {
+    const { motoboyId, raceId } = request.body;
+
+    try {
+      const race = await Race.updateOne(
+        { _id: raceId, status: "awaiting" },
+        { motoboyId, status: "inProgress" }
+      );
+
+      if (race.nModified === 1)
+        return response.status(200).json({ modified: true });
+      else return response.status(304).json({ modified: false });
     } catch (err) {
       return response.status(500);
     }
