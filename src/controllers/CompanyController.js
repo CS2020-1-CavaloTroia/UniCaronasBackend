@@ -59,8 +59,8 @@ module.exports = {
       });
 
       return response.json({
-        inProgress: myRacesInProgress,
-        awaiting: myRacesAwaiting,
+        inProgress: myRacesInProgress || [],
+        awaiting: myRacesAwaiting || [],
       });
     } catch (err) {
       return response.status(500);

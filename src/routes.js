@@ -52,6 +52,7 @@ routes.post(
   verifyJWT,
   MotoboyController.setFirebaseNotificationToken
 );
+routes.post("/motoboy/races", verifyJWT, MotoboyController.getRaces);
 
 // Company
 routes.post("/company/signin", upload.single("file"), CompanyController.signin);

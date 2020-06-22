@@ -1,5 +1,6 @@
 var jwt = require("jsonwebtoken");
 const Motoboy = require("./../models/Motoboy");
+const Race = require("./../models/Race");
 
 module.exports = {
   async signin(request, response) {
@@ -87,6 +88,22 @@ module.exports = {
     try {
       const connectedMotoboys = await Motoboy.find({ online: true });
       return response.json(connectedMotoboys);
+    } catch (err) {
+      return response.status(500);
+    }
+  },
+
+  async getRaces(request, response) {
+    const { motoboyId } = request.body;
+
+    try {
+      const pendingRaces = await Race.find({ status: "awaiting" });
+      const myRace = await Race.findOne({ status: "inProgress", motoboyId });
+
+      return response.json({
+        awaiting: pendingRaces || [],
+        inProgress: myRace || [],
+      });
     } catch (err) {
       return response.status(500);
     }
