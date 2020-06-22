@@ -45,6 +45,21 @@ module.exports = {
     }
   },
 
+  async getUser(request, response) {
+    const { phoneNumber, googleUID } = request.body;
+
+    try {
+      const user = await Motoboy.findOne({
+        phoneNumber,
+        googleUID,
+      });
+
+      return response.json(user);
+    } catch (err) {
+      return response.status(500);
+    }
+  },
+
   async setFirebaseNotificationToken(request, response) {
     const { firebaseNotificationToken, _id } = request.body;
 

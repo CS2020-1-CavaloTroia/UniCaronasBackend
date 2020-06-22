@@ -53,10 +53,12 @@ routes.post(
   MotoboyController.setFirebaseNotificationToken
 );
 routes.post("/motoboy/races", verifyJWT, MotoboyController.getRaces);
+routes.post("/motoboy/user", MotoboyController.getUser);
 
 // Company
 routes.post("/company/signin", upload.single("file"), CompanyController.signin);
 routes.post("/company/races", verifyJWT, CompanyController.getRaces);
+routes.post("/company/user", CompanyController.getUser);
 
 // Routes
 routes.post("/race/create", verifyJWT, RaceController.create);
