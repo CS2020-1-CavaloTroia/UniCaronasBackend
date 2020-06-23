@@ -61,18 +61,18 @@ module.exports = {
   },
 
   async getRaces(request, response) {
-    const { companyId } = request.body;
+    const { company } = request.body;
 
     try {
       const myRacesInProgress = await Race.find({
-        companyId,
+        company,
         status: "inProgress",
-      });
+      }).populate("company");
 
       const myRacesAwaiting = await Race.find({
-        companyId,
+        company,
         status: "awaiting",
-      });
+      }).populate("company");
 
       return response.json({
         inProgress: myRacesInProgress || [],

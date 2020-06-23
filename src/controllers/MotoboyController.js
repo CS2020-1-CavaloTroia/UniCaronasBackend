@@ -110,11 +110,18 @@ module.exports = {
   },
 
   async getRaces(request, response) {
-    const { motoboyId } = request.body;
+    const { motoboy } = request.body;
 
     try {
-      const pendingRaces = await Race.find({ status: "awaiting" });
-      const myRace = await Race.findOne({ status: "inProgress", motoboyId });
+      const pendingRaces = await Race.find({ status: "awaiting" }).populate(
+        "company"
+      );
+      const myRace = await Race.findOne({
+        status: "inProgress",
+        motoboy,
+      })
+        .populate("company")
+        .populate("motoboy");
 
       return response.json({
         awaiting: pendingRaces || [],

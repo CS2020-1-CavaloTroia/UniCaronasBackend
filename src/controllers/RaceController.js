@@ -3,7 +3,7 @@ const Race = require("./../models/Race");
 module.exports = {
   async create(request, response) {
     const {
-      companyId,
+      company,
       initialLocation,
       finalLocation,
       route,
@@ -13,7 +13,7 @@ module.exports = {
 
     try {
       const race = await Race.create({
-        companyId,
+        company,
         initialLocation,
         finalLocation,
         route,
@@ -28,12 +28,12 @@ module.exports = {
   },
 
   async startRace(request, response) {
-    const { motoboyId, raceId } = request.body;
+    const { motoboy, raceId } = request.body;
 
     try {
       const race = await Race.updateOne(
         { _id: raceId, status: "awaiting" },
-        { motoboyId, status: "inProgress" }
+        { motoboy, status: "inProgress" }
       );
 
       if (race.nModified === 1)

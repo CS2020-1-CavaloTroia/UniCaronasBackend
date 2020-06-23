@@ -1,8 +1,9 @@
 const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
-const RaceSchema = new mongoose.Schema({
-  companyId: String,
-  motoboyId: String,
+const RaceSchema = Schema({
+  company: { type: Schema.Types.ObjectId, ref: "Company" },
+  motoboy: { type: Schema.Types.ObjectId, ref: "Motoboy" },
   initialLocation: Object,
   finalLocation: Object,
   address: String,
