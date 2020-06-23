@@ -67,12 +67,16 @@ module.exports = {
       const myRacesInProgress = await Race.find({
         company,
         status: "inProgress",
-      }).populate("company");
+      })
+        .populate("company")
+        .populate("motoboy");
 
       const myRacesAwaiting = await Race.find({
         company,
         status: "awaiting",
-      }).populate("company");
+      })
+        .populate("company")
+        .populate("motoboy");
 
       return response.json({
         inProgress: myRacesInProgress || [],
