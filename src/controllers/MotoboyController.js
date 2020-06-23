@@ -25,6 +25,7 @@ module.exports = {
       return response.json(formattedMotoboy);
     } catch (err) {
       if (err.code === 11000) {
+        await Motoboy.updateOne({ phoneNumber, googleUID }, { name });
         const motoboy = await Motoboy.findOne({ phoneNumber, googleUID });
 
         if (motoboy !== null) {

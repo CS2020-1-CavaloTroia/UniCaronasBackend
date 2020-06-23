@@ -24,6 +24,7 @@ module.exports = {
       return response.json(formattedCompany);
     } catch (err) {
       if (err.code === 11000) {
+        await Company.updateOne({ phoneNumber, googleUID }, { name });
         const company = await Company.findOne({ phoneNumber, googleUID });
 
         if (company !== null) {
