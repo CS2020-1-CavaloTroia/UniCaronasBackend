@@ -117,8 +117,16 @@ module.exports = {
         "company"
       );
       const myRace = await Race.findOne({
-        status: "inProgress",
-        motoboy,
+        $or: [
+          ({
+            status: "inProgress",
+            motoboy,
+          },
+          {
+            status: "goToCompany",
+            motoboy,
+          }),
+        ],
       })
         .populate("company")
         .populate("motoboy");
