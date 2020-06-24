@@ -47,8 +47,6 @@ module.exports = {
   async startRace(request, response) {
     const { motoboy, raceId } = request.body;
 
-    console.log(motoboy, raceId);
-
     try {
       const race = await Race.updateOne(
         { _id: raceId, motoboy, status: "goToCompany" },

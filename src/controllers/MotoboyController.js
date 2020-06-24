@@ -118,14 +118,14 @@ module.exports = {
       );
       const myRace = await Race.find({
         $or: [
-          ({
+          {
             status: "inProgress",
             motoboy,
           },
           {
             status: "goToCompany",
             motoboy,
-          }),
+          },
         ],
       })
         .populate("company")
