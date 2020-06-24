@@ -116,7 +116,7 @@ module.exports = {
       const pendingRaces = await Race.find({ status: "awaiting" }).populate(
         "company"
       );
-      const myRace = await Race.findOne({
+      const myRace = await Race.find({
         $or: [
           ({
             status: "inProgress",
@@ -133,7 +133,7 @@ module.exports = {
 
       return response.json({
         awaiting: pendingRaces || [],
-        inProgress: myRace || [],
+        inProgress: myRace,
       });
     } catch (err) {
       return response.status(500);
