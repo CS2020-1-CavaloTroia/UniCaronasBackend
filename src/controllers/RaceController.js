@@ -47,10 +47,12 @@ module.exports = {
   async startRace(request, response) {
     const { motoboy, raceId } = request.body;
 
+    console.log(motoboy, raceId);
+
     try {
       const race = await Race.updateOne(
-        { _id: raceId, status: "goToCompany" },
-        { motoboy, status: "inProgress" }
+        { _id: raceId, motoboy, status: "goToCompany" },
+        { status: "inProgress" }
       );
 
       return response.status(200).json({ modified: true });
@@ -64,8 +66,8 @@ module.exports = {
 
     try {
       const race = await Race.updateOne(
-        { _id: raceId, status: "inProgress" },
-        { motoboy, status: "finished" }
+        { _id: raceId, motoboy, status: "inProgress" },
+        { status: "finished" }
       );
 
       return response.status(200).json({ modified: true });

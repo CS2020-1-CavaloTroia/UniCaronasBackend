@@ -63,7 +63,7 @@ routes.post("/company/user", CompanyController.getUser);
 // Routes
 routes.post("/race/create", verifyJWT, RaceController.create);
 routes.post("/race/gotocompany", verifyJWT, RaceController.goToCompanyRace);
-routes.post("/race/startRace", verifyJWT, RaceController.goToCompanyRace);
-routes.post("/race/finishRace", verifyJWT, RaceController.goToCompanyRace);
+routes.post("/race/startRace", verifyJWT, RaceController.startRace);
+routes.post("/race/finishRace", verifyJWT, RaceController.finishRace);
 
 module.exports = routes;
