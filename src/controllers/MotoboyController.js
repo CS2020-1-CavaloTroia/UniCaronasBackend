@@ -13,6 +13,8 @@ module.exports = {
         name,
         phoneNumber,
         firebaseNotificationToken: "",
+        online: false,
+        status: "free",
       });
 
       const _id = motoboy._id;
@@ -25,7 +27,10 @@ module.exports = {
       return response.json(formattedMotoboy);
     } catch (err) {
       if (err.code === 11000) {
-        await Motoboy.updateOne({ phoneNumber, googleUID }, { name });
+        await Motoboy.updateOne(
+          { phoneNumber, googleUID },
+          { name, online: false, status: "free" }
+        );
         const motoboy = await Motoboy.findOne({ phoneNumber, googleUID });
 
         if (motoboy !== null) {
@@ -137,6 +142,15 @@ module.exports = {
       });
     } catch (err) {
       return response.status(500);
+    }
+  },
+
+  async getConnectedMotoboys() {
+    try {
+      const motoboys = await Motoboy.find({ online: true });
+      return motoboys;
+    } catch (err) {
+      return [];
     }
   },
 };

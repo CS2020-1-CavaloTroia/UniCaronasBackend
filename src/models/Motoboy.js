@@ -8,6 +8,7 @@ const MotoboySchema = new mongoose.Schema(
     name: String,
     phoneNumber: { type: String, unique: true, index: true, required: true },
     online: Boolean,
+    status: String, // 'delivering' 'free'
     latitude: Number,
     longitude: Number,
     heading: Number,
