@@ -67,6 +67,6 @@ routes.post("/race/gotocompany", verifyJWT, RaceController.goToCompanyRace);
 routes.post("/race/startRace", verifyJWT, RaceController.startRace);
 routes.post("/race/finishRace", verifyJWT, RaceController.finishRace);
 routes.post("/race/remove", verifyJWT, RaceController.removeRace);
-Router.post("/race/cancel", verifyJWT, RaceController.cancelRace);
+routes.post("/race/cancel", verifyJWT, RaceController.cancelRace);
 
 module.exports = routes;
