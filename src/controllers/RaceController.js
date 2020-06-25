@@ -105,7 +105,7 @@ module.exports = {
           motoboy,
           status: "goToCompany",
         },
-        { status: "awaiting" }
+        { status: "awaiting", motoboy: null }
       );
 
       return response.status(200).json({ modified: true });
