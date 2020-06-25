@@ -25,6 +25,7 @@ const verifyJWT = (req, res, next) => {
 const MotoboyController = require("./controllers/MotoboyController");
 const CompanyController = require("./controllers/CompanyController");
 const RaceController = require("./controllers/RaceController");
+const { Router } = require("express");
 
 const routes = express.Router();
 
@@ -66,5 +67,6 @@ routes.post("/race/gotocompany", verifyJWT, RaceController.goToCompanyRace);
 routes.post("/race/startRace", verifyJWT, RaceController.startRace);
 routes.post("/race/finishRace", verifyJWT, RaceController.finishRace);
 routes.post("/race/remove", verifyJWT, RaceController.removeRace);
+Router.post("/race/cancel", verifyJWT, RaceController.cancelRace);
 
 module.exports = routes;

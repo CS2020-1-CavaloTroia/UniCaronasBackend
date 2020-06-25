@@ -94,4 +94,23 @@ module.exports = {
       return response.status(500);
     }
   },
+
+  async cancelRace(request, response) {
+    const { motoboy, raceId } = request.body;
+
+    try {
+      const race = await Race.updateOne(
+        {
+          _id: raceId,
+          motoboy,
+          status: "goToCompany",
+        },
+        { status: "awaiting" }
+      );
+
+      return response.status(200).json({ modified: true });
+    } catch (err) {
+      return response.status(500);
+    }
+  },
 };
