@@ -126,6 +126,12 @@ module.exports = {
     }
   },
 
+  async setToOffline(_id) {
+    try {
+      await Motoboy.updateOne({ _id }, { online: false });
+    } catch (err) {}
+  },
+
   async getRaces(request, response) {
     const { motoboy } = request.body;
 

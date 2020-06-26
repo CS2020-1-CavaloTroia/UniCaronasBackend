@@ -9,6 +9,7 @@ const MotoboyController = require("./src/controllers/MotoboyController");
 const app = express();
 const server = http.Server(app);
 const io = require("socket.io")(server);
+const moment = require("moment");
 
 const motoboys = {};
 const companies = {};
@@ -32,8 +33,20 @@ const updateConnectedMotoboys = async () => {
   try {
     const motoboys = await MotoboyController.getConnectedMotoboys();
 
+    console.log(motoboys.length);
+
     motoboys.forEach((value, index) => {
-      if (value.lastTimeOnline) console.log(value.lastTimeOnline);
+      if (value.lastTimeOnline) {
+        const past = moment(value.lastTimeOnline);
+        const now = moment(new Date());
+        const duration = moment.duration(now.diff(past));
+
+        if (duration.asSeconds() > 30) {
+          MotoboyController.setToOffline(value._id);
+        }
+      } else {
+        MotoboyController.setToOffline(value._id);
+      }
     });
   } catch (err) {
     console.log(err);
