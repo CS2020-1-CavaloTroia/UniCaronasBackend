@@ -43,10 +43,6 @@ mongoose.connect(
 
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.send("Page not found");
-});
-
 app.use("/files", express.static(path.resolve(__dirname, "..", "uploads")));
 
 app.use(routes);

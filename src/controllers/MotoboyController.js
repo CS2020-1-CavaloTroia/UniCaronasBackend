@@ -81,8 +81,9 @@ module.exports = {
   },
 
   async updateLocation(request, response) {
-    const { _id, latitude, longitude, heading } = request.body;
+    const { _id, latitude, longitude, heading, speed } = request.body[0];
 
+    // if (speed > 2)
     try {
       const motoboy = await Motoboy.updateOne(
         { _id },
@@ -92,6 +93,8 @@ module.exports = {
     } catch (err) {
       return response.status(500);
     }
+
+    // return response.status(200);
   },
 
   async setMotoboyConnection(request, response) {
