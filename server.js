@@ -28,9 +28,25 @@ const connectedMotoboys = async () => {
   io.emit("connectedMotoboys", JSON.stringify(connected));
 };
 
-setInterval(function () {
+const updateConnectedMotoboys = async () => {
+  try {
+    const motoboys = await MotoboyController.getConnectedMotoboys();
+
+    motoboys.forEach((value, index) => {
+      if (value.lastTimeOnline) console.log(value.lastTimeOnline);
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+setInterval(() => {
   connectedMotoboys();
 }, 1000);
+
+setInterval(() => {
+  updateConnectedMotoboys();
+}, 5000);
 
 mongoose.connect(
   "mongodb+srv://sudden:suden1012jipa@cluster0-lq2a6.gcp.mongodb.net/sudden?retryWrites=true&w=majority",

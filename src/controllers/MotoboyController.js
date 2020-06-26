@@ -6,6 +6,7 @@ module.exports = {
   async signin(request, response) {
     // const thumbnail = request.file.filename;
     const { name, phoneNumber, googleUID } = request.body;
+    const lastTimeOnline = new Date();
 
     try {
       const motoboy = await Motoboy.create({
@@ -15,6 +16,7 @@ module.exports = {
         firebaseNotificationToken: "",
         online: false,
         status: "free",
+        lastTimeOnline: lastTimeOnline.getTime(),
       });
 
       const _id = motoboy._id;
@@ -82,12 +84,19 @@ module.exports = {
 
   async updateLocation(request, response) {
     const { _id, latitude, longitude, heading, speed } = request.body[0];
+    const lastTimeOnline = new Date();
 
     // if (speed > 2)
     try {
       const motoboy = await Motoboy.updateOne(
         { _id },
-        { latitude, longitude, heading, online: true }
+        {
+          latitude,
+          longitude,
+          heading,
+          online: true,
+          lastTimeOnline: lastTimeOnline.getTime(),
+        }
       );
       return response.json(motoboy);
     } catch (err) {

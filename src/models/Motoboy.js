@@ -12,6 +12,7 @@ const MotoboySchema = new mongoose.Schema(
     latitude: Number,
     longitude: Number,
     heading: Number,
+    lastTimeOnline: Number,
     firebaseNotificationToken: String,
   },
   {
