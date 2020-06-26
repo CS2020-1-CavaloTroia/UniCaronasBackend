@@ -33,8 +33,6 @@ const updateConnectedMotoboys = async () => {
   try {
     const motoboys = await MotoboyController.getConnectedMotoboys();
 
-    console.log(motoboys.length);
-
     motoboys.forEach((value, index) => {
       if (value.lastTimeOnline) {
         const past = moment(value.lastTimeOnline);
