@@ -30,7 +30,7 @@ const connectedMotoboys = async () => {
 
 setInterval(function () {
   connectedMotoboys();
-}, 5000);
+}, 1000);
 
 mongoose.connect(
   "mongodb+srv://sudden:suden1012jipa@cluster0-lq2a6.gcp.mongodb.net/sudden?retryWrites=true&w=majority",
