@@ -23,15 +23,6 @@ module.exports = {
         initiated_at,
         address,
       });
-
-      sendNotification(
-        "Nova entrega solicidada",
-        "Sudden Platform solicitou uma nova entrega de 11km",
-        [
-          "coZVvxSERSGd2lPsNk99lg:APA91bGWnTfR2V5l-qEf6qoFofx5iKx3bZpNThKpz53FWDvokbrPEgckszK0xozAA8ejyqnMjpq5BxxjCDsheiAhXdRMzQhqkHsaTIyy1HT_IcDaw5g8riwhwx1qCGLw3c6JanxkiYF-",
-        ],
-        0
-      );
       return response.json(race);
     } catch (err) {
       return response.status(500);
