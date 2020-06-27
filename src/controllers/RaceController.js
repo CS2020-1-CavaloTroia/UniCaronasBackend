@@ -116,7 +116,7 @@ module.exports = {
       if (_raceModified.company.firebaseNotificationToken !== "")
         await firebaseNotification.sendNotification(
           "Entrega concluída",
-          `${_raceModified.motoboy.name} chegou em ${_raceModified.address}.`,
+          `${_raceModified.motoboy.name} finalizou a entrega para ${_raceModified.address}.`,
           [_raceModified.company.firebaseNotificationToken],
           8003
         );
