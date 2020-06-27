@@ -35,7 +35,7 @@ module.exports = {
         return t;
       };
 
-      firebaseNotification.sendNotification(
+      await firebaseNotification.sendNotification(
         "Nova entrega solicidada",
         `Sudden Platform solicitou uma nova entrega de 11km para ${address}`,
         tokens,
