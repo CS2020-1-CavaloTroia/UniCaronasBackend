@@ -67,12 +67,12 @@ module.exports = {
         .populate("company")
         .populate("motoboy");
 
-      await firebaseNotification.sendNotification(
-        "Entrega iniciada",
-        `${_raceModified.motoboy.name} está vindo até você.`,
-        [_raceModified.company.firebaseNotificationToken],
-        8001
-      );
+      // await firebaseNotification.sendNotification(
+      //   "Entrega iniciada",
+      //   `${_raceModified.motoboy.name} está vindo até você.`,
+      //   [_raceModified.company.firebaseNotificationToken],
+      //   8001
+      // );
 
       if (race.nModified === 1)
         return response.status(200).json({ modified: true });
