@@ -1,7 +1,7 @@
 const Race = require("./../models/Race");
 const Motoboy = require("./../models/Motoboy");
-const firebaseNotification = require("./src/services/firebaseNotification");
-const MotoboyController = require("./src/controllers/MotoboyController");
+const firebaseNotification = require("../services/firebaseNotification");
+const MotoboyController = require("./MotoboyController");
 
 module.exports = {
   async create(request, response) {
