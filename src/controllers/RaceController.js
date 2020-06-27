@@ -33,7 +33,8 @@ module.exports = {
       const tokens = () => {
         const t = [];
         for (let i = 0; i < motoboys.length; i++)
-          t.push(motoboys[i].firebaseNotificationToken);
+          if (motoboys[i].status === "free")
+            t.push(motoboys[i].firebaseNotificationToken);
 
         return t;
       };
