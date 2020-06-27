@@ -70,7 +70,7 @@ module.exports = {
       await firebaseNotification.sendNotification(
         "Entrega iniciada",
         `${_raceModified.motoboy.name} está vindo até você.`,
-        tokens(),
+        [_raceModified.company.firebaseNotificationToken],
         8001
       );
 
