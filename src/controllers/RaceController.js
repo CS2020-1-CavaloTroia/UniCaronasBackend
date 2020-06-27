@@ -67,14 +67,13 @@ module.exports = {
         .populate("company")
         .populate("motoboy");
 
-      await firebaseNotification.sendNotification(
-        "Entrega iniciada",
-        `${_raceModified.motoboy.name} está vindo até você.`,
-        [
-          "f5d1ov_mS8KoZQYKuBTmyU:APA91bELeVxLG4GJNiTIWcfcJ2sY8EjCW-7wJ4FPymgkBQze1eRpX0KtWEJXv6mqGGsRE1T0v0b35nJbClor_c-bXk_kVPdMWDUs30adT8i8bKDgl6iEXUrxgENC06-Ezr2jND-_gPG0",
-        ],
-        8001
-      );
+      if (_raceModified.company.firebaseNotificationToken !== "")
+        await firebaseNotification.sendNotification(
+          "Entrega iniciada",
+          `${_raceModified.motoboy.name} está vindo até você.`,
+          [_raceModified.company.firebaseNotificationToken],
+          8001
+        );
 
       if (race.nModified === 1)
         return response.status(200).json({ modified: true });

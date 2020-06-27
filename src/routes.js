@@ -60,6 +60,11 @@ routes.post("/motoboy/user", MotoboyController.getUser);
 routes.post("/company/signin", upload.single("file"), CompanyController.signin);
 routes.post("/company/races", verifyJWT, CompanyController.getRaces);
 routes.post("/company/user", CompanyController.getUser);
+routes.post(
+  "/company/subscribeToNotifications",
+  verifyJWT,
+  CompanyController.setFirebaseNotificationToken
+);
 
 // Routes
 routes.post("/race/create", verifyJWT, RaceController.create);

@@ -45,6 +45,20 @@ module.exports = {
     }
   },
 
+  async setFirebaseNotificationToken(request, response) {
+    const { firebaseNotificationToken, _id } = request.body;
+
+    try {
+      const company = await Company.updateOne(
+        { _id },
+        { firebaseNotificationToken }
+      );
+      return response.json(firebaseNotificationToken);
+    } catch (err) {
+      return response.status(500);
+    }
+  },
+
   async getUser(request, response) {
     const { phoneNumber, googleUID } = request.body;
 
