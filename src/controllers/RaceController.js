@@ -63,6 +63,17 @@ module.exports = {
 
       await Motoboy.update({ _id: motoboy }, { status: "delivering" });
 
+      const _raceModified = await Race.findOne({ _id: raceId })
+        .populate("company")
+        .populate("motoboy");
+
+      await firebaseNotification.sendNotification(
+        "Entrega iniciada",
+        `${_raceModified.motoboy.name} está vindo até você.`,
+        tokens(),
+        8001
+      );
+
       if (race.nModified === 1)
         return response.status(200).json({ modified: true });
       else return response.status(304).json({ modified: false });
@@ -95,7 +106,7 @@ module.exports = {
         { status: "finished" }
       );
 
-      await Motoboy.update({ _id: motoboy }, { status: "free" });
+      await Motoboy.updateOne({ _id: motoboy }, { status: "free" });
 
       return response.status(200).json({ modified: true });
     } catch (err) {
@@ -131,6 +142,8 @@ module.exports = {
         },
         { status: "awaiting", motoboy: null }
       );
+
+      await Motoboy.updateOne({ _id: motoboy }, { status: "free" });
 
       return response.status(200).json({ modified: true });
     } catch (err) {
