@@ -7,6 +7,12 @@ const FCM = new fcm("firebaseKey.json");
 module.exports = {
   async sendNotification(title, body, tokens, code) {
     const message = {
+      android: {
+        notification: {
+          icon: "ic_notification",
+          color: "#3F0072",
+        },
+      },
       data: {
         code: JSON.stringify(code),
       },
