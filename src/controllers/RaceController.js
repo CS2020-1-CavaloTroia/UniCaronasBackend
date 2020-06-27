@@ -135,6 +135,10 @@ module.exports = {
     const { motoboy, raceId } = request.body;
 
     try {
+      const _raceModified = await Race.findOne({ _id: raceId })
+        .populate("company")
+        .populate("motoboy");
+
       const race = await Race.updateOne(
         {
           _id: raceId,
@@ -145,6 +149,17 @@ module.exports = {
       );
 
       await Motoboy.updateOne({ _id: motoboy }, { status: "free" });
+
+      if (
+        _raceModified.company.firebaseNotificationToken !== "" &&
+        _raceModified.motoboy.firebaseNotificationToken !== ""
+      )
+        await firebaseNotification.sendNotification(
+          "Entrega cancelada",
+          `${_raceModified.motoboy.name} cancelou a entraga para ${_raceModified.address}. Estamos buscando outro motoboy para você. ;)`,
+          [_raceModified.company.firebaseNotificationToken],
+          8002
+        );
 
       return response.status(200).json({ modified: true });
     } catch (err) {
