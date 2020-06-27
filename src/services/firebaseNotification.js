@@ -1,11 +1,14 @@
 const fcm = require("fcm-notification");
-const FCM = new fcm("../config/firebaseAdmin.json");
+// const FCM = new fcm(
+//   "/Users/fernandoseverino/Documents/projects/Sudden/firebaseKey.json"
+// );
+const FCM = new fcm("firebaseKey.json");
 
 module.exports = {
   async sendNotification(title, body, tokens, code) {
     const message = {
       data: {
-        code,
+        code: JSON.stringify(code),
       },
       notification: {
         title,

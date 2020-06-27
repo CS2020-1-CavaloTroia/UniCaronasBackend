@@ -1,6 +1,7 @@
 const Race = require("./../models/Race");
 const Motoboy = require("./../models/Motoboy");
-const { sendNotification } = require("../services/firebaseNotification");
+const firebaseNotification = require("./src/services/firebaseNotification");
+const MotoboyController = require("./src/controllers/MotoboyController");
 
 module.exports = {
   async create(request, response) {
@@ -23,6 +24,24 @@ module.exports = {
         initiated_at,
         address,
       });
+
+      const motoboys = await MotoboyController.getConnectedMotoboys();
+
+      const tokens = () => {
+        const t = [];
+        motoboys.map((value, index) => {
+          t.push(value.firebaseNotificationToken);
+        });
+        return t;
+      };
+
+      firebaseNotification.sendNotification(
+        "Nova entrega solicidada",
+        `Sudden Platform solicitou uma nova entrega de 11km para ${address}`,
+        tokens,
+        525
+      );
+
       return response.json(race);
     } catch (err) {
       return response.status(500);
