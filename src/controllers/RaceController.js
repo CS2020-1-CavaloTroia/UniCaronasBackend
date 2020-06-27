@@ -2,6 +2,7 @@ const Race = require("./../models/Race");
 const Motoboy = require("./../models/Motoboy");
 const firebaseNotification = require("../services/firebaseNotification");
 const MotoboyController = require("./MotoboyController");
+const Company = require("../models/Company");
 
 module.exports = {
   async create(request, response) {
@@ -25,21 +26,23 @@ module.exports = {
         address,
       });
 
+      const _company = await Company.findOne({ _id: company });
+
       const motoboys = await MotoboyController.getConnectedMotoboys();
 
       const tokens = () => {
         const t = [];
-        motoboys.map((value, index) => {
-          t.push(value.firebaseNotificationToken);
-        });
+        for (let i = 0; i < motoboys.length; i++)
+          t.push(motoboys[i].firebaseNotificationToken);
+
         return t;
       };
 
       await firebaseNotification.sendNotification(
         "Nova entrega solicidada",
-        `Sudden Platform solicitou uma nova entrega de 11km para ${address}`,
-        tokens,
-        525
+        `${_company.name} solicitou uma nova entrega para ${address}`,
+        tokens(),
+        7001
       );
 
       return response.json(race);
