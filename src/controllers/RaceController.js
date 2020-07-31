@@ -13,6 +13,8 @@ module.exports = {
       route,
       initiated_at,
       address,
+      distance,
+      duration,
     } = request.body;
 
     try {
@@ -21,6 +23,8 @@ module.exports = {
         initialLocation,
         finalLocation,
         route,
+        distance,
+        duration,
         status: "awaiting",
         initiated_at,
         address,

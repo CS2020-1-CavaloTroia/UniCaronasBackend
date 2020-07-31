@@ -8,6 +8,8 @@ const RaceSchema = Schema({
   finalLocation: Object,
   address: String,
   route: Array,
+  distance: String,
+  duration: String,
   status: String, // "awaiting" "goToCompany" "inProgress" "finished" "cancelByMotoboy" "cancelByCompany" "cancelByClient"
   initiated_at: Number,
   finished_at: Number,
