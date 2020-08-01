@@ -6,7 +6,7 @@ const RaceSchema = Schema({
   motoboy: { type: Schema.Types.ObjectId, ref: "Motoboy" },
   initialLocation: Object,
   finalLocation: Object,
-  address: String,
+  address: Object,
   route: Array,
   distance: String,
   duration: String,
