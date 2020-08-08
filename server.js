@@ -6,6 +6,7 @@ const cors = require("cors");
 const path = require("path");
 const http = require("http");
 const MotoboyController = require("./src/controllers/MotoboyController");
+const RaceController = require("./src/controllers/RaceController");
 const app = express();
 const server = http.Server(app);
 const io = require("socket.io")(server);
@@ -51,12 +52,33 @@ const updateConnectedMotoboys = async () => {
   }
 };
 
+const resendNotificationForAwaintingRaces = async () => {
+  try {
+    const races = await RaceController.getAwaitingRaces();
+
+    races.forEach((value, index) => {
+      if (value.initiated_at) {
+        const past = moment(value.initiated_at);
+        const now = moment(new Date());
+        const duration = moment.duration(now.diff(past));
+
+        if (duration.asSeconds() > 14 && value.sentTo !== "all") {
+          RaceController.resendNotificationForAwaintingRaces(value);
+        }
+      }
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 setInterval(() => {
   connectedMotoboys();
 }, 1000);
 
 setInterval(() => {
   updateConnectedMotoboys();
+  resendNotificationForAwaintingRaces();
 }, 5000);
 
 mongoose.connect(

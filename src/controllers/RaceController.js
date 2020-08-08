@@ -216,4 +216,60 @@ module.exports = {
       return response.status(500);
     }
   },
+
+  async getInProgressRaces() {
+    try {
+      const races = await Race.find({ status: "inProgress" })
+        .populate("company")
+        .populate("motoboy");
+      return races;
+    } catch (err) {
+      return [];
+    }
+  },
+
+  async getAwaitingRaces() {
+    try {
+      const races = await Race.find({ status: "awaiting" }).populate("company");
+      return races;
+    } catch (err) {
+      return [];
+    }
+  },
+
+  async resendNotificationForAwaintingRaces(
+    value,
+    _company,
+    address,
+    lastToken
+  ) {
+    try {
+      const race = await Race.updateOne({ _id: value._id }, { sentTo: "all" });
+
+      const motoboys = await MotoboyController.getConnectedMotoboys();
+
+      const tokens = () => {
+        const t = [];
+        for (let i = 0; i < motoboys.length; i++)
+          if (
+            motoboys[i].status === "free" &&
+            motoboys[i].firebaseNotificationToken !== value.sentTo
+          )
+            t.push(motoboys[i].firebaseNotificationToken);
+
+        return t;
+      };
+
+      await firebaseNotification.sendNotification(
+        `Nova corrida`,
+        `${value.company.name} solicitou uma nova entrega para ${
+          value.address.street
+        }${value.address.number ? `, ${value.address.number}` : ``}`,
+        tokens(),
+        7001
+      );
+    } catch (err) {
+      return [];
+    }
+  },
 };
