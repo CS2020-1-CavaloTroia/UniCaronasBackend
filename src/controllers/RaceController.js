@@ -1,6 +1,7 @@
 const Race = require("./../models/Race");
 const Motoboy = require("./../models/Motoboy");
 const firebaseNotification = require("../services/firebaseNotification");
+const maps = require("../services/maps");
 const MotoboyController = require("./MotoboyController");
 const Company = require("../models/Company");
 
@@ -18,6 +19,47 @@ module.exports = {
     } = request.body;
 
     try {
+      const _company = await Company.findOne({ _id: company });
+
+      const motoboys = await MotoboyController.getConnectedMotoboys();
+
+      let motoboyCloser = {
+        motoboy: null,
+        distance: 0,
+      };
+
+      // const tokens = () => {
+      //   const t = [];
+      //   for (let i = 0; i < motoboys.length; i++)
+      //     if (motoboys[i].status === "free")
+      //       t.push(motoboys[i].firebaseNotificationToken);
+
+      //   return t;
+      // };
+
+      for (let i = 0; i < motoboys.length; i++)
+        if (motoboys[i].status === "free") {
+          const distance = maps.distanceBetween2Coords(initialLocation, {
+            latitude: motoboys[i].latitude,
+            longitude: motoboys[i].longitude,
+          });
+
+          if (!motoboyCloser.motoboy || motoboyCloser.distance > distance) {
+            motoboyCloser.motoboy = motoboys[i];
+            motoboyCloser.distance = distance;
+          }
+        }
+
+      if (motoboyCloser.motoboy)
+        await firebaseNotification.sendNotification(
+          `${motoboyCloser.motoboy.name},`,
+          `${_company.name} solicitou uma nova entrega para ${address.street}${
+            address.number ? `, ${address.number}` : ``
+          }`,
+          [motoboyCloser.motoboy.firebaseNotificationToken],
+          7001
+        );
+
       const race = await Race.create({
         company,
         initialLocation,
@@ -28,27 +70,10 @@ module.exports = {
         status: "awaiting",
         initiated_at,
         address,
+        sentTo: motoboyCloser.motoboy
+          ? motoboyCloser.motoboy.firebaseNotificationToken
+          : "all",
       });
-
-      const _company = await Company.findOne({ _id: company });
-
-      const motoboys = await MotoboyController.getConnectedMotoboys();
-
-      const tokens = () => {
-        const t = [];
-        for (let i = 0; i < motoboys.length; i++)
-          if (motoboys[i].status === "free")
-            t.push(motoboys[i].firebaseNotificationToken);
-
-        return t;
-      };
-
-      await firebaseNotification.sendNotification(
-        "Nova entrega solicidada",
-        `${_company.name} solicitou uma nova entrega para ${address}`,
-        tokens(),
-        7001
-      );
 
       return response.json(race);
     } catch (err) {
@@ -120,7 +145,13 @@ module.exports = {
       if (_raceModified.company.firebaseNotificationToken !== "")
         await firebaseNotification.sendNotification(
           "Entrega concluída",
-          `${_raceModified.motoboy.name} finalizou a entrega para ${_raceModified.address}.`,
+          `${_raceModified.motoboy.name} finalizou a entrega para ${
+            _raceModified.address.street
+          }${
+            _raceModified.address.number
+              ? `, ${_raceModified.address.number}`
+              : ``
+          }.`,
           [_raceModified.company.firebaseNotificationToken],
           8003
         );
@@ -169,7 +200,13 @@ module.exports = {
       if (_raceModified.company.firebaseNotificationToken !== "")
         await firebaseNotification.sendNotification(
           "Entrega cancelada",
-          `${_raceModified.motoboy.name} cancelou a entrega para ${_raceModified.address}. Estamos buscando outro motoboy para você. ;)`,
+          `${_raceModified.motoboy.name} cancelou a entrega para ${
+            _raceModified.address.street
+          }${
+            _raceModified.address.number
+              ? `, ${_raceModified.address.number}`
+              : ``
+          }. Estamos buscando outro motoboy para você. ;)`,
           [_raceModified.company.firebaseNotificationToken],
           8002
         );

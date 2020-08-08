@@ -13,6 +13,7 @@ const RaceSchema = Schema({
   status: String, // "awaiting" "goToCompany" "inProgress" "finished" "cancelByMotoboy" "cancelByCompany" "cancelByClient"
   initiated_at: Number,
   finished_at: Number,
+  sentTo: String, // Motoboy token with unique access to the race. Max duration = 17 seconds else it is sent to all motoboys ["{token}", "all"]
 });
 
 module.exports = mongoose.model("Race", RaceSchema);
