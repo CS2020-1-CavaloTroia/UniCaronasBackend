@@ -1,4 +1,14 @@
 var jwt = require("jsonwebtoken");
+const path = require("path");
+const { format } = require("util");
+const { Storage } = require("@google-cloud/storage");
+const serviceKey = path.join(__dirname, "..", "..", "storageKey.json");
+const storage = new Storage({
+  keyFilename: serviceKey,
+  projectId: "sudden-279202",
+});
+const bucket = storage.bucket("sudden_profile_photos");
+
 const Company = require("./../models/Company");
 const Race = require("../models/Race");
 
@@ -107,5 +117,34 @@ module.exports = {
     } catch (err) {
       return response.status(500);
     }
+  },
+
+  async updateProfile(request, response) {
+    const ext = path.extname(request.file.originalname);
+    const name = path.basename(request.file.originalname, ext);
+    const blob = bucket.file(`${name}-${Date.now()}${ext}`);
+    const blobStream = blob.createWriteStream();
+
+    blobStream.on("error", (err) => {
+      next(err);
+    });
+
+    blobStream.on("finish", async () => {
+      // The public URL can be used to directly access the file via HTTP.
+      const publicUrl = format(
+        `https://storage.googleapis.com/${bucket.name}/${blob.name}`
+      );
+      try {
+        await Company.updateOne(
+          { _id: request.body._id },
+          { thumbnail: publicUrl }
+        );
+        response.status(200).send(publicUrl);
+      } catch (err) {
+        response.status(500);
+      }
+    });
+
+    blobStream.end(request.file.buffer);
   },
 };

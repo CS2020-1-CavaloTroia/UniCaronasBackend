@@ -1,6 +1,7 @@
 const express = require("express");
 const multer = require("multer");
 const uploadConfig = require("./config/upload");
+const googleCloudUpload = require("./config/googleCloudUpload");
 var jwt = require("jsonwebtoken");
 
 const verifyJWT = (req, res, next) => {
@@ -55,6 +56,11 @@ routes.post(
 );
 routes.post("/motoboy/races", verifyJWT, MotoboyController.getRaces);
 routes.post("/motoboy/user", MotoboyController.getUser);
+routes.post(
+  "/motoboy/updateprofile",
+  googleCloudUpload.single("file"),
+  MotoboyController.updateProfile
+);
 
 // Company
 routes.post("/company/signin", upload.single("file"), CompanyController.signin);
@@ -64,6 +70,11 @@ routes.post(
   "/company/subscribeToNotifications",
   verifyJWT,
   CompanyController.setFirebaseNotificationToken
+);
+routes.post(
+  "/company/updateprofile",
+  googleCloudUpload.single("file"),
+  CompanyController.updateProfile
 );
 
 // Routes
