@@ -14,7 +14,7 @@ const MotoboySchema = new mongoose.Schema(
     heading: Number,
     lastTimeOnline: Number,
     firebaseNotificationToken: String,
-    cfp: String,
+    cpf: String,
     CNHDocument: String,
     criminalRecord: String,
     profileImage: String,
