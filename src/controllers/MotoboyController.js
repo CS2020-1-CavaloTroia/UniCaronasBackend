@@ -23,6 +23,8 @@ module.exports = {
         lastTimeOnline: lastTimeOnline.getTime(),
         profileStatus: "analysing",
         cpf,
+        rating: 0,
+        ratings: {},
       });
 
       const _id = motoboy._id;

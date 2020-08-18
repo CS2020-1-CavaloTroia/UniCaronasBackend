@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const { baseURL } = require("../config/urls");
+const { Double } = require("mongodb");
 
 const MotoboySchema = new mongoose.Schema(
   {
@@ -19,6 +20,9 @@ const MotoboySchema = new mongoose.Schema(
     criminalRecord: String,
     profileImage: String,
     profileStatus: String, //analysing, created, block, awaitingPayment
+    rating: Double,
+    ratings: Object,
+    supportMessage: String,
   },
   {
     toJSON: {
