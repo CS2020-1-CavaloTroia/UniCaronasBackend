@@ -2,12 +2,6 @@ var jwt = require("jsonwebtoken");
 const path = require("path");
 const { format } = require("util");
 const { Storage } = require("@google-cloud/storage");
-const serviceKey = path.join(__dirname, "..", "..", "storageKey.json");
-const storage = new Storage({
-  keyFilename: serviceKey,
-  projectId: "sudden-279202",
-});
-const bucket = storage.bucket("sudden_profile_photos");
 
 const Motoboy = require("./../models/Motoboy");
 const Race = require("./../models/Race");
@@ -15,7 +9,7 @@ const Race = require("./../models/Race");
 module.exports = {
   async signin(request, response) {
     // const thumbnail = request.file.filename;
-    const { name, phoneNumber, googleUID } = request.body;
+    const { name, phoneNumber, googleUID, cpf } = request.body;
     const lastTimeOnline = new Date();
 
     try {
@@ -27,6 +21,8 @@ module.exports = {
         online: false,
         status: "free",
         lastTimeOnline: lastTimeOnline.getTime(),
+        profileStatus: "analysing",
+        cpf,
       });
 
       const _id = motoboy._id;
@@ -41,7 +37,7 @@ module.exports = {
       if (err.code === 11000) {
         await Motoboy.updateOne(
           { phoneNumber, googleUID },
-          { name, online: false, status: "free" }
+          { name, online: false, status: "free", cpf }
         );
         const motoboy = await Motoboy.findOne({ phoneNumber, googleUID });
 
@@ -183,6 +179,12 @@ module.exports = {
   },
 
   async updateProfile(request, response) {
+    const serviceKey = path.join(__dirname, "..", "..", "storageKey.json");
+    const storage = new Storage({
+      keyFilename: serviceKey,
+      projectId: "sudden-279202",
+    });
+    const bucket = storage.bucket("sudden_profile_photos");
     const ext = path.extname(request.file.originalname);
     const name = path.basename(request.file.originalname, ext);
     const blob = bucket.file(`${name}-${Date.now()}${ext}`);
@@ -202,7 +204,76 @@ module.exports = {
           { _id: request.body._id },
           { thumbnail: publicUrl }
         );
-        console.log("ggg");
+        response.status(200).send(publicUrl);
+      } catch (err) {
+        response.status(500);
+      }
+    });
+
+    blobStream.end(request.file.buffer);
+  },
+
+  async updateCNH(request, response) {
+    const serviceKey = path.join(__dirname, "..", "..", "storageKey.json");
+    const storage = new Storage({
+      keyFilename: serviceKey,
+      projectId: "sudden-279202",
+    });
+    const bucket = storage.bucket("sudden_profile_photos");
+    const ext = path.extname(request.file.originalname);
+    const name = path.basename(request.file.originalname, ext);
+    const blob = bucket.file(`${name}-${Date.now()}${ext}`);
+    const blobStream = blob.createWriteStream();
+
+    blobStream.on("error", (err) => {
+      next(err);
+    });
+
+    blobStream.on("finish", async () => {
+      // The public URL can be used to directly access the file via HTTP.
+      const publicUrl = format(
+        `https://storage.googleapis.com/${bucket.name}/${blob.name}`
+      );
+      try {
+        await Motoboy.updateOne(
+          { _id: request.body._id },
+          { CNHDocument: publicUrl }
+        );
+        response.status(200).send(publicUrl);
+      } catch (err) {
+        response.status(500);
+      }
+    });
+
+    blobStream.end(request.file.buffer);
+  },
+
+  async updateCriminalRecord(request, response) {
+    const serviceKey = path.join(__dirname, "..", "..", "storageKey.json");
+    const storage = new Storage({
+      keyFilename: serviceKey,
+      projectId: "sudden-279202",
+    });
+    const bucket = storage.bucket("sudden_profile_photos");
+    const ext = path.extname(request.file.originalname);
+    const name = path.basename(request.file.originalname, ext);
+    const blob = bucket.file(`${name}-${Date.now()}${ext}`);
+    const blobStream = blob.createWriteStream();
+
+    blobStream.on("error", (err) => {
+      next(err);
+    });
+
+    blobStream.on("finish", async () => {
+      // The public URL can be used to directly access the file via HTTP.
+      const publicUrl = format(
+        `https://storage.googleapis.com/${bucket.name}/${blob.name}`
+      );
+      try {
+        await Motoboy.updateOne(
+          { _id: request.body._id },
+          { criminalRecord: publicUrl }
+        );
         response.status(200).send(publicUrl);
       } catch (err) {
         response.status(500);

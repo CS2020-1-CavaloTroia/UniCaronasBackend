@@ -33,7 +33,7 @@ const routes = express.Router();
 const upload = multer(uploadConfig);
 
 // Motoboy
-routes.post("/motoboy/signin", upload.single("file"), MotoboyController.signin);
+routes.post("/motoboy/signin", MotoboyController.signin);
 routes.post(
   "/motoboy/updatelocation",
   verifyJWT,
@@ -60,6 +60,16 @@ routes.post(
   "/motoboy/updateprofile",
   googleCloudUpload.single("file"),
   MotoboyController.updateProfile
+);
+routes.post(
+  "/motoboy/updatecnh",
+  googleCloudUpload.single("file"),
+  MotoboyController.updateCNH
+);
+routes.post(
+  "/motoboy/updatecriminalreport",
+  googleCloudUpload.single("file"),
+  MotoboyController.updateCriminalRecord
 );
 
 // Company

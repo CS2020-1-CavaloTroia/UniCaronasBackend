@@ -14,6 +14,11 @@ const MotoboySchema = new mongoose.Schema(
     heading: Number,
     lastTimeOnline: Number,
     firebaseNotificationToken: String,
+    cfp: String,
+    CNHDocument: String,
+    criminalRecord: String,
+    profileImage: String,
+    profileStatus: String, //analysing, created, block, awaitingPayment
   },
   {
     toJSON: {
