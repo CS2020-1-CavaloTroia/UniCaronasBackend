@@ -289,10 +289,10 @@ module.exports = {
     const { _id } = request.body;
 
     try {
-      const status = await Race.find({ _id }).select("profileStatus");
+      const status = await Motoboy.findOne({ _id }).select("profileStatus");
 
       return response.json({
-        profileStatus: status,
+        profileStatus: status.profileStatus,
       });
     } catch (err) {
       return response.status(500);
