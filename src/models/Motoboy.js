@@ -19,10 +19,12 @@ const MotoboySchema = new mongoose.Schema(
     CNHDocument: String,
     criminalRecord: String,
     profileImage: String,
-    profileStatus: String, //analysing, created, block, awaitingPayment
+    profileStatus: String, //analysing, free, block, awaitingPayment
     rating: Double,
     ratings: Object,
     supportMessage: String,
+    nextPayment: Number,
+    paymentValue: Double,
   },
   {
     toJSON: {

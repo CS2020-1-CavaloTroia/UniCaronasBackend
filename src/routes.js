@@ -71,6 +71,11 @@ routes.post(
   googleCloudUpload.single("file"),
   MotoboyController.updateCriminalRecord
 );
+routes.post(
+  "/motoboy/getprofilestatus",
+  verifyJWT,
+  MotoboyController.getProfileStatus
+);
 
 // Company
 routes.post("/company/signin", upload.single("file"), CompanyController.signin);

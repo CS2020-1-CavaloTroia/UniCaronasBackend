@@ -284,4 +284,27 @@ module.exports = {
 
     blobStream.end(request.file.buffer);
   },
+
+  async getProfileStatus(request, response) {
+    const { _id } = request.body;
+
+    try {
+      const status = await Race.find({ _id }).select("profileStatus");
+
+      return response.json({
+        profileStatus: status,
+      });
+    } catch (err) {
+      return response.status(500);
+    }
+  },
+
+  async getConnectedMotoboys() {
+    try {
+      const motoboys = await Motoboy.find({ online: true });
+      return motoboys;
+    } catch (err) {
+      return [];
+    }
+  },
 };
