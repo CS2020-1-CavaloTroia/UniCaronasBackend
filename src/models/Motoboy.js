@@ -20,11 +20,11 @@ const MotoboySchema = new mongoose.Schema(
     criminalRecord: String,
     profileImage: String,
     profileStatus: String, //analysing, free, block, awaitingPayment
-    rating: Double,
+    rating: Number,
     ratings: Object,
     supportMessage: String,
     nextPayment: Number,
-    paymentValue: Double,
+    paymentValue: Number,
   },
   {
     toJSON: {
