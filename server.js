@@ -11,6 +11,7 @@ const app = express();
 const server = http.Server(app);
 const io = require("socket.io")(server);
 const moment = require("moment");
+const schedule = require("node-schedule");
 
 const motoboys = {};
 const companies = {};
@@ -23,6 +24,32 @@ io.on("connection", (socket) => {
   } else if (user_type === "company") {
     companies[user_id] = { socketId: socket.id, userId: user_id };
   }
+});
+
+schedule.scheduleJob("0 0 * * *", async () => {
+  const motoboys = await MotoboyController.getAllMotoboys();
+
+  motoboys.forEach((value, index) => {
+    const now = new Date();
+    const fiveMoreDays = new Date();
+    fiveMoreDays.setDate(fiveMoreDays.getDate() + 5);
+
+    if (value.nextPayment) {
+      if (value.profileStatus === "free") {
+        if (now.getTime() < value.nextPayment) {
+          MotoboyController.updateProfileStatus(value._id, "awaitingPayment");
+        }
+      } else if (value.profileStatus === "awaitingPayment") {
+        if (fiveMoreDays.getTime() < value.nextPayment) {
+          MotoboyController.updateProfileStatus(value._id, "block");
+        }
+      }
+    } else {
+      const paymentDate = new Date();
+      paymentDate.setDate(paymentDate.getDate() + 2);
+      MotoboyController.updateNextPayment(value._id, paymentDate.getTime());
+    }
+  });
 });
 
 const connectedMotoboys = async () => {

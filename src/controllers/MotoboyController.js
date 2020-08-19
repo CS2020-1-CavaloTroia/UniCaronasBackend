@@ -180,6 +180,27 @@ module.exports = {
     }
   },
 
+  async getAllMotoboys() {
+    try {
+      const motoboys = await Motoboy.find();
+      return motoboys;
+    } catch (err) {
+      return [];
+    }
+  },
+
+  async updateNextPayment(_id, nextPayment) {
+    try {
+      await Motoboy.updateOne({ _id }, { nextPayment });
+    } catch (err) {}
+  },
+
+  async updateProfileStatus(_id, profileStatus) {
+    try {
+      await Motoboy.updateOne({ _id }, { profileStatus });
+    } catch (err) {}
+  },
+
   async updateProfile(request, response) {
     const serviceKey = path.join(__dirname, "..", "..", "storageKey.json");
     const storage = new Storage({
