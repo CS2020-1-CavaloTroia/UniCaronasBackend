@@ -5,7 +5,7 @@ const fcm = require("fcm-notification");
 const FCM = new fcm("firebaseKey.json");
 
 module.exports = {
-  async sendNotification(title, body, tokens, code) {
+  async sendNotification(title, body, tokens, data) {
     const message = {
       android: {
         notification: {
@@ -13,9 +13,7 @@ module.exports = {
           color: "#3F0072",
         },
       },
-      data: {
-        code: JSON.stringify(code),
-      },
+      data: JSON.stringify(data),
       notification: {
         title,
         body,

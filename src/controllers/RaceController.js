@@ -57,7 +57,7 @@ module.exports = {
             address.number ? `, ${address.number}` : ``
           }`,
           [motoboyCloser.motoboy.firebaseNotificationToken],
-          7001
+          { code: 7001 }
         );
 
       const race = await Race.create({
@@ -101,7 +101,7 @@ module.exports = {
           "Entrega iniciada",
           `${_raceModified.motoboy.name} está vindo até você.`,
           [_raceModified.company.firebaseNotificationToken],
-          8001
+          { code: 8001 }
         );
 
       if (race.nModified === 1)
@@ -153,7 +153,7 @@ module.exports = {
               : ``
           }.`,
           [_raceModified.company.firebaseNotificationToken],
-          8003
+          { code: 8003 }
         );
 
       return response.status(200).json({ modified: true });
@@ -208,7 +208,7 @@ module.exports = {
               : ``
           }. Estamos buscando outro motoboy para você. ;)`,
           [_raceModified.company.firebaseNotificationToken],
-          8002
+          { code: 7002 }
         );
 
       return response.status(200).json({ modified: true });
@@ -266,7 +266,7 @@ module.exports = {
           value.address.street
         }${value.address.number ? `, ${value.address.number}` : ``}`,
         tokens(),
-        7001
+        { code: 7001 }
       );
     } catch (err) {
       return [];
