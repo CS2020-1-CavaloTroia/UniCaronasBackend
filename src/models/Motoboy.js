@@ -25,6 +25,9 @@ const MotoboySchema = new mongoose.Schema(
     supportMessage: String,
     nextPayment: Number,
     paymentValue: Number,
+    vehicleBoard: String,
+    vehicleModel: String,
+    vehicleColor: String,
   },
   {
     toJSON: {

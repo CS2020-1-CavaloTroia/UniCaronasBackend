@@ -76,6 +76,11 @@ routes.post(
   verifyJWT,
   MotoboyController.getProfileStatus
 );
+routes.post(
+  "/motoboy/updatebasicinformations",
+  verifyJWT,
+  MotoboyController.updateBasicInformations
+);
 
 // Company
 routes.post("/company/signin", upload.single("file"), CompanyController.signin);

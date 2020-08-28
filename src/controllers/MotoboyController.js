@@ -25,6 +25,7 @@ module.exports = {
         cpf,
         rating: 0,
         ratings: {},
+        vehicleColor: "#D2691E",
       });
 
       const _id = motoboy._id;
@@ -326,6 +327,27 @@ module.exports = {
       return motoboys;
     } catch (err) {
       return [];
+    }
+  },
+
+  async updateBasicInformations(request, response) {
+    const {
+      _id,
+      name,
+      vehicleColor,
+      vehicleBoard,
+      vehicleModel,
+    } = request.body;
+
+    try {
+      const update = await Motoboy.updateOne(
+        { _id },
+        { name, vehicleColor, vehicleBoard, vehicleModel }
+      );
+
+      return response.status(200);
+    } catch (err) {
+      return response.status(500);
     }
   },
 };
