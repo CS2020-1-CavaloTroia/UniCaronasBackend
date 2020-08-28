@@ -345,7 +345,12 @@ module.exports = {
         { name, vehicleColor, vehicleBoard, vehicleModel }
       );
 
-      return response.status(200);
+      return response.json({
+        name,
+        vehicleColor,
+        vehicleBoard,
+        vehicleModel,
+      });
     } catch (err) {
       return response.status(500);
     }
