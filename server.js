@@ -5,7 +5,7 @@ const routes = require("./src/routes");
 const cors = require("cors");
 const path = require("path");
 const http = require("http");
-const MotoboyController = require("./src/controllers/MotoboyController");
+const DriverController = require("./src/controllers/DriverController");
 const RaceController = require("./src/controllers/RaceController");
 const app = express();
 const server = http.Server(app);
@@ -13,23 +13,23 @@ const io = require("socket.io")(server);
 const moment = require("moment");
 const schedule = require("node-schedule");
 
-const motoboys = {};
+const drivers = {};
 const companies = {};
 
 io.on("connection", (socket) => {
   const { user_id, user_type } = socket.handshake.query;
 
-  if (user_type === "motoboy") {
-    motoboys[user_id] = { socketId: socket.id, userId: user_id };
+  if (user_type === "driver") {
+    drivers[user_id] = { socketId: socket.id, userId: user_id };
   } else if (user_type === "company") {
     companies[user_id] = { socketId: socket.id, userId: user_id };
   }
 });
 
 schedule.scheduleJob("0 0 * * *", async () => {
-  const motoboys = await MotoboyController.getAllMotoboys();
+  const drivers = await DriverController.getAllDrivers();
 
-  motoboys.forEach((value, index) => {
+  drivers.forEach((value, index) => {
     const now = new Date();
     const fiveMoreDays = new Date();
     fiveMoreDays.setDate(fiveMoreDays.getDate() + 5);
@@ -37,41 +37,41 @@ schedule.scheduleJob("0 0 * * *", async () => {
     if (value.nextPayment) {
       if (value.profileStatus === "free") {
         if (now.getTime() < value.nextPayment) {
-          MotoboyController.updateProfileStatus(value._id, "awaitingPayment");
+          DriverController.updateProfileStatus(value._id, "awaitingPayment");
         }
       } else if (value.profileStatus === "awaitingPayment") {
         if (fiveMoreDays.getTime() < value.nextPayment) {
-          MotoboyController.updateProfileStatus(value._id, "block");
+          DriverController.updateProfileStatus(value._id, "block");
         }
       }
     } else {
       const paymentDate = new Date();
       paymentDate.setDate(paymentDate.getDate() + 2);
-      MotoboyController.updateNextPayment(value._id, paymentDate.getTime());
+      DriverController.updateNextPayment(value._id, paymentDate.getTime());
     }
   });
 });
 
-const connectedMotoboys = async () => {
-  const connected = await MotoboyController.getConnectedMotoboys();
-  io.emit("connectedMotoboys", JSON.stringify(connected));
+const connectedDrivers = async () => {
+  const connected = await DriverController.getConnectedDrivers();
+  io.emit("connectedDrivers", JSON.stringify(connected));
 };
 
-const updateConnectedMotoboys = async () => {
+const updateConnectedDrivers = async () => {
   try {
-    const motoboys = await MotoboyController.getConnectedMotoboys();
+    const drivers = await DriverController.getConnectedDrivers();
 
-    motoboys.forEach((value, index) => {
+    drivers.forEach((value, index) => {
       if (value.lastTimeOnline) {
         const past = moment(value.lastTimeOnline);
         const now = moment(new Date());
         const duration = moment.duration(now.diff(past));
 
         if (duration.asSeconds() > 30) {
-          MotoboyController.setToOffline(value._id);
+          DriverController.setToOffline(value._id);
         }
       } else {
-        MotoboyController.setToOffline(value._id);
+        DriverController.setToOffline(value._id);
       }
     });
   } catch (err) {
@@ -100,11 +100,11 @@ const resendNotificationForAwaintingRaces = async () => {
 };
 
 setInterval(() => {
-  connectedMotoboys();
+  connectedDrivers();
 }, 1000);
 
 setInterval(() => {
-  updateConnectedMotoboys();
+  updateConnectedDrivers();
   resendNotificationForAwaintingRaces();
 }, 5000);
 

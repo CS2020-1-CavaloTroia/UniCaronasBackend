@@ -3,18 +3,20 @@ const path = require("path");
 const { format } = require("util");
 const { Storage } = require("@google-cloud/storage");
 
-const Motoboy = require("./../models/Motoboy");
+const Driver = require("./../models/Driver");
 const Race = require("./../models/Race");
 
 module.exports = {
-  // método de login do motorista
+
+  // Cadastra o motorista
   async signin(request, response) {
+
     // const thumbnail = request.file.filename;
-    const { name, phoneNumber, googleUID, cpf } = request.body;
+    const { name, phoneNumber, googleUID } = request.body;
     const lastTimeOnline = new Date();
 
     try {
-      const motoboy = await Motoboy.create({
+      const driver = await Driver.create({
         googleUID,
         name,
         phoneNumber,
@@ -23,37 +25,36 @@ module.exports = {
         status: "free",
         lastTimeOnline: lastTimeOnline.getTime(),
         profileStatus: "analysing",
-        cpf,
         rating: 0,
         ratings: {},
         vehicleColor: "#D2691E",
       });
 
-      const _id = motoboy._id;
+      const _id = driver._id;
 
       const token = jwt.sign({ _id }, "@SUDDEN#1012platform");
 
-      const formattedMotoboy = { ...motoboy._doc };
-      formattedMotoboy.token = token;
+      const formattedDriver = { ...driver._doc };
+      formattedDriver.token = token;
 
-      return response.json(formattedMotoboy);
+      return response.json(formattedDriver);
     } catch (err) {
       if (err.code === 11000) {
-        await Motoboy.updateOne(
+        await Driver.updateOne(
           { phoneNumber, googleUID },
-          { name, online: false, status: "free", cpf }
+          { name, online: false, status: "free"}
         );
-        const motoboy = await Motoboy.findOne({ phoneNumber, googleUID });
+        const driver = await Driver.findOne({ phoneNumber, googleUID });
 
-        if (motoboy !== null) {
-          const _id = motoboy._id;
+        if (driver !== null) {
+          const _id = driver._id;
 
           const token = jwt.sign({ _id }, "@SUDDEN#1012platform");
 
-          const formattedMotoboy = { ...motoboy._doc };
-          formattedMotoboy.token = token;
+          const formattedDriver = { ...driver._doc };
+          formattedDriver.token = token;
 
-          return response.json(formattedMotoboy);
+          return response.json(formattedDriver);
         }
         // User unauthorized
         else return response.status(401).json("User authenticated");
@@ -63,11 +64,12 @@ module.exports = {
     }
   },
 
+  // Retorna os dados do motorista
   async getUser(request, response) {
     const { phoneNumber, googleUID } = request.body;
 
     try {
-      const user = await Motoboy.findOne({
+      const user = await Driver.findOne({
         phoneNumber,
         googleUID,
       });
@@ -78,11 +80,12 @@ module.exports = {
     }
   },
 
+  // Atribui o token de notificação do Firebase
   async setFirebaseNotificationToken(request, response) {
     const { firebaseNotificationToken, _id } = request.body;
 
     try {
-      const motoboy = await Motoboy.updateOne(
+      const driver = await Driver.updateOne(
         { _id },
         { firebaseNotificationToken }
       );
@@ -92,13 +95,14 @@ module.exports = {
     }
   },
 
+  // Atualiza a localização do motorista
   async updateLocation(request, response) {
     const { _id, latitude, longitude, heading, speed } = request.body[0];
     const lastTimeOnline = new Date();
 
     // if (speed > 2)
     try {
-      const motoboy = await Motoboy.updateOne(
+      const driver = await Driver.updateOne(
         { _id },
         {
           latitude,
@@ -108,7 +112,7 @@ module.exports = {
           lastTimeOnline: lastTimeOnline.getTime(),
         }
       );
-      return response.json(motoboy);
+      return response.json(driver);
     } catch (err) {
       return response.status(500);
     }
@@ -116,53 +120,58 @@ module.exports = {
     // return response.status(200);
   },
 
-  async setMotoboyConnection(request, response) {
+  // Torna o status do motorista como online
+  async setDriverConnection(request, response) {
     const { _id, online } = request.body;
 
     try {
-      const motoboy = await Motoboy.updateOne({ _id }, { online });
-      return response.json(motoboy);
+      const driver = await Driver.updateOne({ _id }, { online });
+      return response.json(driver);
     } catch (err) {
       return response.status(500);
     }
   },
 
-  async getOnlineMotoboys(request, response) {
+
+  // Retorna os motoristas disponíveis
+  async getOnlineDrivers(request, response) {
     try {
-      const connectedMotoboys = await Motoboy.find({ online: true });
-      return response.json(connectedMotoboys);
+      const connectedDrivers = await Driver.find({ online: true });
+      return response.json(connectedDrivers);
     } catch (err) {
       return response.status(500);
     }
   },
 
+  // Define o status do motorista como offline
   async setToOffline(_id) {
     try {
-      await Motoboy.updateOne({ _id }, { online: false });
+      await Driver.updateOne({ _id }, { online: false });
     } catch (err) {}
   },
 
+  // Retorna os dados das corridas
   async getRaces(request, response) {
-    const { motoboy } = request.body;
+    const { driver } = request.body;
 
     try {
       const pendingRaces = await Race.find({ status: "awaiting" }).populate(
-        "company"
+        "passenger"
       );
       const myRace = await Race.find({
         $or: [
           {
             status: "inProgress",
-            motoboy,
+            driver,
           },
           {
-            status: "goToCompany",
-            motoboy,
+            status: "goToPassengerLocal",
+            driver,
           },
         ],
       })
-        .populate("company")
-        .populate("motoboy");
+        .populate("passenger")
+        .populate("driver");
 
       return response.json({
         awaiting: pendingRaces || [],
@@ -173,36 +182,34 @@ module.exports = {
     }
   },
 
-  async getConnectedMotoboys() {
+  // Conectar a um motorista online
+  async getConnectedDriver() {
     try {
-      const motoboys = await Motoboy.find({ online: true });
-      return motoboys;
+      const driver = await Driver.find({ online: true });
+      return driver;
     } catch (err) {
       return [];
     }
   },
 
-  async getAllMotoboys() {
+  // Retorna todos os motoristas
+  async getAllDrivers() {
     try {
-      const motoboys = await Motoboy.find();
-      return motoboys;
+      const drivers = await Driver.find();
+      return drivers;
     } catch (err) {
       return [];
     }
   },
 
-  async updateNextPayment(_id, nextPayment) {
-    try {
-      await Motoboy.updateOne({ _id }, { nextPayment });
-    } catch (err) {}
-  },
-
+  // Atualiza o status do perfil
   async updateProfileStatus(_id, profileStatus) {
     try {
-      await Motoboy.updateOne({ _id }, { profileStatus });
+      await Driver.updateOne({ _id }, { profileStatus });
     } catch (err) {}
   },
 
+  // Atualiza o perfil do motorista
   async updateProfile(request, response) {
     const serviceKey = path.join(__dirname, "..", "..", "storageKey.json");
     const storage = new Storage({
@@ -225,7 +232,7 @@ module.exports = {
         `https://storage.googleapis.com/${bucket.name}/${blob.name}`
       );
       try {
-        await Motoboy.updateOne(
+        await Driver.updateOne(
           { _id: request.body._id },
           { thumbnail: publicUrl }
         );
@@ -238,6 +245,7 @@ module.exports = {
     blobStream.end(request.file.buffer);
   },
 
+  // Atualiza a CNH
   async updateCNH(request, response) {
     const serviceKey = path.join(__dirname, "..", "..", "storageKey.json");
     const storage = new Storage({
@@ -260,7 +268,7 @@ module.exports = {
         `https://storage.googleapis.com/${bucket.name}/${blob.name}`
       );
       try {
-        await Motoboy.updateOne(
+        await Driver.updateOne(
           { _id: request.body._id },
           { CNHDocument: publicUrl }
         );
@@ -273,46 +281,12 @@ module.exports = {
     blobStream.end(request.file.buffer);
   },
 
-  async updateCriminalRecord(request, response) {
-    const serviceKey = path.join(__dirname, "..", "..", "storageKey.json");
-    const storage = new Storage({
-      keyFilename: serviceKey,
-      projectId: "sudden-279202",
-    });
-    const bucket = storage.bucket("sudden_profile_photos");
-    const ext = path.extname(request.file.originalname);
-    const name = path.basename(request.file.originalname, ext);
-    const blob = bucket.file(`${name}-${Date.now()}${ext}`);
-    const blobStream = blob.createWriteStream();
-
-    blobStream.on("error", (err) => {
-      next(err);
-    });
-
-    blobStream.on("finish", async () => {
-      // The public URL can be used to directly access the file via HTTP.
-      const publicUrl = format(
-        `https://storage.googleapis.com/${bucket.name}/${blob.name}`
-      );
-      try {
-        await Motoboy.updateOne(
-          { _id: request.body._id },
-          { criminalRecord: publicUrl }
-        );
-        response.status(200).send(publicUrl);
-      } catch (err) {
-        response.status(500);
-      }
-    });
-
-    blobStream.end(request.file.buffer);
-  },
-
+  // Retorna o status do perfil do motorista
   async getProfileStatus(request, response) {
     const { _id } = request.body;
 
     try {
-      const status = await Motoboy.findOne({ _id }).select("profileStatus");
+      const status = await Driver.findOne({ _id }).select("profileStatus");
 
       return response.json({
         profileStatus: status.profileStatus,
@@ -322,16 +296,18 @@ module.exports = {
     }
   },
 
-  async getConnectedMotoboys() {
+  // Encontra os motoristas online
+  async getConnectedDrivers() {
     try {
-      const motoboys = await Motoboy.find({ online: true });
-      return motoboys;
+      const drivers = await Driver.find({ online: true });
+      return drivers;
     } catch (err) {
       return [];
     }
   },
 
-  async updateBasicInformations(request, response) {
+  // Atualiza os dados do veículo do motorista
+  async updateVehicleInformations(request, response) {
     const {
       _id,
       name,
@@ -341,7 +317,7 @@ module.exports = {
     } = request.body;
 
     try {
-      const update = await Motoboy.updateOne(
+      const update = await Driver.updateOne(
         { _id },
         { name, vehicleColor, vehicleBoard, vehicleModel }
       );
