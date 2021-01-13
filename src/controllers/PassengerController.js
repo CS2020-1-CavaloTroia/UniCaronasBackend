@@ -9,7 +9,7 @@ const storage = new Storage({
 });
 const bucket = storage.bucket("sudden_profile_photos");
 
-const Company = require("./../models/Company");
+const Passenger = require("../models/Passenger");
 const Race = require("../models/Race");
 
 module.exports = {
@@ -17,35 +17,35 @@ module.exports = {
     const { name, phoneNumber, googleUID } = request.body;
 
     try {
-      const company = await Company.create({
+      const passenger = await Passenger.create({
         googleUID,
         name,
         phoneNumber,
         firebaseNotificationToken: "",
       });
 
-      const _id = company._id;
+      const _id = passenger._id;
 
       const token = jwt.sign({ _id }, "@SUDDEN#1012platform");
 
-      const formattedCompany = { ...company._doc };
-      formattedCompany.token = token;
+      const formattedPassenger = { ...passenger._doc };
+      formattedPassenger.token = token;
 
-      return response.json(formattedCompany);
+      return response.json(formattedPassenger);
     } catch (err) {
       if (err.code === 11000) {
-        await Company.updateOne({ phoneNumber, googleUID }, { name });
-        const company = await Company.findOne({ phoneNumber, googleUID });
+        await Passenger.updateOne({ phoneNumber, googleUID }, { name });
+        const passenger = await Passenger.findOne({ phoneNumber, googleUID });
 
-        if (company !== null) {
-          const _id = company._id;
+        if (passenger !== null) {
+          const _id = passenger._id;
 
           const token = jwt.sign({ _id }, "@SUDDEN#1012platform");
 
-          const formattedCompany = { ...company._doc };
-          formattedCompany.token = token;
+          const formattedPassenger = { ...passenger._doc };
+          formattedPassenger.token = token;
 
-          return response.json(formattedCompany);
+          return response.json(formattedPassenger);
         }
         // User unauthorized
         else return response.status(401).json("User authenticated");
@@ -59,7 +59,7 @@ module.exports = {
     const { firebaseNotificationToken, _id } = request.body;
 
     try {
-      const company = await Company.updateOne(
+      const passenger = await Passenger.updateOne(
         { _id },
         { firebaseNotificationToken }
       );
@@ -73,7 +73,7 @@ module.exports = {
     const { phoneNumber, googleUID } = request.body;
 
     try {
-      const user = await Company.findOne({
+      const user = await Passenger.findOne({
         phoneNumber,
         googleUID,
       });
@@ -85,29 +85,29 @@ module.exports = {
   },
 
   async getRaces(request, response) {
-    const { company } = request.body;
+    const { passenger } = request.body;
 
     try {
       const myRacesInProgress = await Race.find({
         $or: [
           {
-            company,
+            passenger,
             status: "inProgress",
           },
           {
-            company,
-            status: "goToCompany",
+            passenger,
+            status: "goToPassenger",
           },
         ],
       })
-        .populate("company")
+        .populate("passenger")
         .populate("motoboy");
 
       const myRacesAwaiting = await Race.find({
-        company,
+        passenger,
         status: "awaiting",
       })
-        .populate("company")
+        .populate("passenger")
         .populate("motoboy");
 
       return response.json({
@@ -135,7 +135,7 @@ module.exports = {
         `https://storage.googleapis.com/${bucket.name}/${blob.name}`
       );
       try {
-        await Company.updateOne(
+        await Passenger.updateOne(
           { _id: request.body._id },
           { thumbnail: publicUrl }
         );

@@ -21,7 +21,7 @@ io.on("connection", (socket) => {
 
   if (user_type === "motoboy") {
     motoboys[user_id] = { socketId: socket.id, userId: user_id };
-  } else if (user_type === "company") {
+  } else if (user_type === "passenger") {
     companies[user_id] = { socketId: socket.id, userId: user_id };
   }
 });

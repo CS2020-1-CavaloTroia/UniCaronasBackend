@@ -3,12 +3,12 @@ const Motoboy = require("./../models/Motoboy");
 const firebaseNotification = require("../services/firebaseNotification");
 const maps = require("../services/maps");
 const MotoboyController = require("./MotoboyController");
-const Company = require("../models/Company");
+const Passenger = require("../models/Passenger");
 
 module.exports = {
   async create(request, response) {
     const {
-      company,
+      passenger,
       initialLocation,
       finalLocation,
       route,
@@ -19,7 +19,7 @@ module.exports = {
     } = request.body;
 
     try {
-      const _company = await Company.findOne({ _id: company });
+      const _passenger = await Passenger.findOne({ _id: passenger });
 
       const motoboys = await MotoboyController.getConnectedMotoboys();
 
@@ -53,7 +53,7 @@ module.exports = {
       if (motoboyCloser.motoboy)
         await firebaseNotification.sendNotification(
           `${motoboyCloser.motoboy.name},`,
-          `${_company.name} solicitou uma nova entrega para ${address.street}${
+          `${_passenger.name} solicitou uma nova entrega para ${address.street}${
             address.number ? `, ${address.number}` : ``
           }`,
           [motoboyCloser.motoboy.firebaseNotificationToken],
@@ -61,7 +61,7 @@ module.exports = {
         );
 
       const race = await Race.create({
-        company,
+        passenger,
         initialLocation,
         finalLocation,
         route,
@@ -81,26 +81,26 @@ module.exports = {
     }
   },
 
-  async goToCompanyRace(request, response) {
+  async goToPassenger(request, response) {
     const { motoboy, raceId } = request.body;
 
     try {
       const race = await Race.updateOne(
         { _id: raceId, status: "awaiting" },
-        { motoboy, status: "goToCompany" }
+        { motoboy, status: "goToPassenger" }
       );
 
       await Motoboy.update({ _id: motoboy }, { status: "delivering" });
 
       const _raceModified = await Race.findOne({ _id: raceId })
-        .populate("company")
+        .populate("passenger")
         .populate("motoboy");
 
-      if (_raceModified.company.firebaseNotificationToken !== "")
+      if (_raceModified.passenger.firebaseNotificationToken !== "")
         await firebaseNotification.sendNotification(
-          "Entrega iniciada",
+          "Carona iniciada",
           `${_raceModified.motoboy.name} está vindo até você.`,
-          [_raceModified.company.firebaseNotificationToken],
+          [_raceModified.passenger.firebaseNotificationToken],
           { code: 8001 }
         );
 
@@ -117,7 +117,7 @@ module.exports = {
 
     try {
       const race = await Race.updateOne(
-        { _id: raceId, motoboy, status: "goToCompany" },
+        { _id: raceId, motoboy, status: "goToPassenger" },
         { status: "inProgress" }
       );
 
@@ -132,7 +132,7 @@ module.exports = {
 
     try {
       const _raceModified = await Race.findOne({ _id: raceId })
-        .populate("company")
+        .populate("passenger")
         .populate("motoboy");
 
       const race = await Race.updateOne(
@@ -142,7 +142,7 @@ module.exports = {
 
       await Motoboy.updateOne({ _id: motoboy }, { status: "free" });
 
-      if (_raceModified.company.firebaseNotificationToken !== "")
+      if (_raceModified.passenger.firebaseNotificationToken !== "")
         await firebaseNotification.sendNotification(
           "Entrega concluída",
           `${_raceModified.motoboy.name} finalizou a entrega para ${
@@ -152,7 +152,7 @@ module.exports = {
               ? `, ${_raceModified.address.number}`
               : ``
           }.`,
-          [_raceModified.company.firebaseNotificationToken],
+          [_raceModified.passenger.firebaseNotificationToken],
           { code: 8003 }
         );
 
@@ -163,12 +163,12 @@ module.exports = {
   },
 
   async removeRace(request, response) {
-    const { company, raceId } = request.body;
+    const { passenger, raceId } = request.body;
 
     try {
       const race = await Race.deleteOne({
         _id: raceId,
-        company,
+        passenger,
         status: "awaiting",
       });
 
@@ -183,21 +183,21 @@ module.exports = {
 
     try {
       const _raceModified = await Race.findOne({ _id: raceId })
-        .populate("company")
+        .populate("passenger")
         .populate("motoboy");
 
       const race = await Race.updateOne(
         {
           _id: raceId,
           motoboy,
-          status: "goToCompany",
+          status: "goToPassenger",
         },
         { status: "awaiting", motoboy: null }
       );
 
       await Motoboy.updateOne({ _id: motoboy }, { status: "free" });
 
-      if (_raceModified.company.firebaseNotificationToken !== "")
+      if (_raceModified.passenger.firebaseNotificationToken !== "")
         await firebaseNotification.sendNotification(
           "Entrega cancelada",
           `${_raceModified.motoboy.name} cancelou a entrega para ${
@@ -207,7 +207,7 @@ module.exports = {
               ? `, ${_raceModified.address.number}`
               : ``
           }. Estamos buscando outro motoboy para você. ;)`,
-          [_raceModified.company.firebaseNotificationToken],
+          [_raceModified.passenger.firebaseNotificationToken],
           { code: 7002 }
         );
 
@@ -220,7 +220,7 @@ module.exports = {
   async getInProgressRaces() {
     try {
       const races = await Race.find({ status: "inProgress" })
-        .populate("company")
+        .populate("passenger")
         .populate("motoboy");
       return races;
     } catch (err) {
@@ -230,7 +230,7 @@ module.exports = {
 
   async getAwaitingRaces() {
     try {
-      const races = await Race.find({ status: "awaiting" }).populate("company");
+      const races = await Race.find({ status: "awaiting" }).populate("passenger");
       return races;
     } catch (err) {
       return [];
@@ -239,7 +239,7 @@ module.exports = {
 
   async resendNotificationForAwaintingRaces(
     value,
-    _company,
+    _passenger,
     address,
     lastToken
   ) {
@@ -261,8 +261,8 @@ module.exports = {
       };
 
       await firebaseNotification.sendNotification(
-        `Nova corrida`,
-        `${value.company.name} solicitou uma nova entrega para ${
+        `Nova carona`,
+        `${value.passenger.name} solicitou uma nova carona para ${
           value.address.street
         }${value.address.number ? `, ${value.address.number}` : ``}`,
         tokens(),

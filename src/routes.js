@@ -24,7 +24,7 @@ const verifyJWT = (req, res, next) => {
 };
 
 const MotoboyController = require("./controllers/MotoboyController");
-const CompanyController = require("./controllers/CompanyController");
+const PassengerController = require("./controllers/PassengerController");
 const RaceController = require("./controllers/RaceController");
 const { Router } = require("express");
 
@@ -82,24 +82,24 @@ routes.post(
   MotoboyController.updateBasicInformations
 );
 
-// Company
-routes.post("/company/signin", upload.single("file"), CompanyController.signin);
-routes.post("/company/races", verifyJWT, CompanyController.getRaces);
-routes.post("/company/user", CompanyController.getUser);
+// Passenger
+routes.post("/passenger/signin", upload.single("file"), PassengerController.signin);
+routes.post("/passenger/races", verifyJWT, PassengerController.getRaces);
+routes.post("/passenger/user", PassengerController.getUser);
 routes.post(
-  "/company/subscribeToNotifications",
+  "/passenger/subscribeToNotifications",
   verifyJWT,
-  CompanyController.setFirebaseNotificationToken
+  PassengerController.setFirebaseNotificationToken
 );
 routes.post(
-  "/company/updateprofile",
+  "/passenger/updateprofile",
   googleCloudUpload.single("file"),
-  CompanyController.updateProfile
+  PassengerController.updateProfile
 );
 
 // Routes
 routes.post("/race/create", verifyJWT, RaceController.create);
-routes.post("/race/gotocompany", verifyJWT, RaceController.goToCompanyRace);
+routes.post("/race/gotopassenger", verifyJWT, RaceController.goToPassenger);
 routes.post("/race/startRace", verifyJWT, RaceController.startRace);
 routes.post("/race/finishRace", verifyJWT, RaceController.finishRace);
 routes.post("/race/remove", verifyJWT, RaceController.removeRace);

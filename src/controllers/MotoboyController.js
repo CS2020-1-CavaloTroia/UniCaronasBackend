@@ -147,7 +147,7 @@ module.exports = {
 
     try {
       const pendingRaces = await Race.find({ status: "awaiting" }).populate(
-        "company"
+        "passenger"
       );
       const myRace = await Race.find({
         $or: [
@@ -156,12 +156,12 @@ module.exports = {
             motoboy,
           },
           {
-            status: "goToCompany",
+            status: "goToPassenger",
             motoboy,
           },
         ],
       })
-        .populate("company")
+        .populate("passenger")
         .populate("motoboy");
 
       return response.json({
