@@ -23,7 +23,7 @@ const verifyJWT = (req, res, next) => {
   });
 };
 
-const MotoboyController = require("./controllers/MotoboyController");
+const DriverController = require("./controllers/DriverController");
 const PassengerController = require("./controllers/PassengerController");
 const RaceController = require("./controllers/RaceController");
 const { Router } = require("express");
@@ -32,54 +32,70 @@ const routes = express.Router();
 
 const upload = multer(uploadConfig);
 
-// Motoboy
-routes.post("/motoboy/signin", MotoboyController.signin);
+// Driver
+//Cadastro
+routes.post("/driver/signin", DriverController.signin);
+
+//Atualizar Localização
 routes.post(
-  "/motoboy/updatelocation",
+  "/driver/updatelocation",
   verifyJWT,
-  MotoboyController.updateLocation
+  DriverController.updateLocation
 );
+
+// Coloca o motorista como online
 routes.post(
-  "/motoboy/setconnection",
+  "/Driver/setconnection",
   verifyJWT,
-  MotoboyController.setMotoboyConnection
+  DriverController.setDriverConnection
 );
+
+// Buscar motoristas online
 routes.get(
-  "/motoboy/connected",
+  "/driver/connected",
   verifyJWT,
-  MotoboyController.getOnlineMotoboys
+  DriverController.getOnlineDrivers
 );
+
+// Permitir notificações
 routes.post(
-  "/motoboy/subscribeToNotifications",
+  "/driver/subscribeToNotifications",
   verifyJWT,
-  MotoboyController.setFirebaseNotificationToken
+  DriverController.setFirebaseNotificationToken
 );
-routes.post("/motoboy/races", verifyJWT, MotoboyController.getRaces);
-routes.post("/motoboy/user", MotoboyController.getUser);
+
+// Retorna Corridas
+routes.post("/driver/races", verifyJWT, DriverController.getRaces);
+
+// Retorna Usuário
+routes.post("/driver/user", DriverController.getUser);
+
+// Atualizar o Profile
 routes.post(
-  "/motoboy/updateprofile",
+  "/driver/updateprofile",
   googleCloudUpload.single("file"),
-  MotoboyController.updateProfile
+  DriverController.updateProfile
 );
+
+// Atualiza CNH
 routes.post(
-  "/motoboy/updatecnh",
+  "/driver/updatecnh",
   googleCloudUpload.single("file"),
-  MotoboyController.updateCNH
+  DriverController.updateCNH
 );
+
+// Retorna o status do profile
 routes.post(
-  "/motoboy/updatecriminalreport",
-  googleCloudUpload.single("file"),
-  MotoboyController.updateCriminalRecord
-);
-routes.post(
-  "/motoboy/getprofilestatus",
+  "/driver/getprofilestatus",
   verifyJWT,
-  MotoboyController.getProfileStatus
+  DriverController.getProfileStatus
 );
+
+// Atualiza dados do veículo
 routes.post(
-  "/motoboy/updatebasicinformations",
+  "/driver/updatevehicleinformations",
   verifyJWT,
-  MotoboyController.updateBasicInformations
+  DriverController.updateVehicleInformations
 );
 
 // Passenger
