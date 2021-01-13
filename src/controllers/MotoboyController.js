@@ -7,6 +7,7 @@ const Motoboy = require("./../models/Motoboy");
 const Race = require("./../models/Race");
 
 module.exports = {
+  // método de login do motorista
   async signin(request, response) {
     // const thumbnail = request.file.filename;
     const { name, phoneNumber, googleUID, cpf } = request.body;
