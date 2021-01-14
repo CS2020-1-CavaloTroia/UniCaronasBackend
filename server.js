@@ -109,7 +109,7 @@ setInterval(() => {
 }, 5000);
 
 mongoose.connect(
-  "mongodb+srv://sudden:suden1012jipa@cluster0-lq2a6.gcp.mongodb.net/sudden?retryWrites=true&w=majority",
+  "mongodb+srv://unicaronas:unicaronas789abc@cluster1.lq2a6.mongodb.net/unicaronas?retryWrites=true&w=majority",
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,

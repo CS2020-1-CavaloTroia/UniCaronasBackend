@@ -1,8 +1,8 @@
 const Race = require("./../models/Race");
-const Motoboy = require("./../models/Motoboy");
+const Driver = require("./../models/Driver");
 const firebaseNotification = require("../services/firebaseNotification");
 const maps = require("../services/maps");
-const MotoboyController = require("./MotoboyController");
+const DriverController = require("./DriverController");
 const Company = require("../models/Company");
 
 module.exports = {
@@ -21,42 +21,42 @@ module.exports = {
     try {
       const _company = await Company.findOne({ _id: company });
 
-      const motoboys = await MotoboyController.getConnectedMotoboys();
+      const driver = await DriverController.getConnecteddriver();
 
-      let motoboyCloser = {
-        motoboy: null,
+      let driverCloser = {
+        driver: null,
         distance: 0,
       };
 
       // const tokens = () => {
       //   const t = [];
-      //   for (let i = 0; i < motoboys.length; i++)
-      //     if (motoboys[i].status === "free")
-      //       t.push(motoboys[i].firebaseNotificationToken);
+      //   for (let i = 0; i < driver.length; i++)
+      //     if (driver[i].status === "free")
+      //       t.push(driver[i].firebaseNotificationToken);
 
       //   return t;
       // };
 
-      for (let i = 0; i < motoboys.length; i++)
-        if (motoboys[i].status === "free") {
+      for (let i = 0; i < driver.length; i++)
+        if (driver[i].status === "free") {
           const distance = maps.distanceBetween2Coords(initialLocation, {
-            latitude: motoboys[i].latitude,
-            longitude: motoboys[i].longitude,
+            latitude: driver[i].latitude,
+            longitude: driver[i].longitude,
           });
 
-          if (!motoboyCloser.motoboy || motoboyCloser.distance > distance) {
-            motoboyCloser.motoboy = motoboys[i];
-            motoboyCloser.distance = distance;
+          if (!driverCloser.driver || driverCloser.distance > distance) {
+            driverCloser.driver = driver[i];
+            driverCloser.distance = distance;
           }
         }
 
-      if (motoboyCloser.motoboy)
+      if (driverCloser.driver)
         await firebaseNotification.sendNotification(
-          `${motoboyCloser.motoboy.name},`,
+          `${driverCloser.driver.name},`,
           `${_company.name} solicitou uma nova entrega para ${address.street}${
             address.number ? `, ${address.number}` : ``
           }`,
-          [motoboyCloser.motoboy.firebaseNotificationToken],
+          [driverCloser.driver.firebaseNotificationToken],
           { code: 7001 }
         );
 
@@ -70,8 +70,8 @@ module.exports = {
         status: "awaiting",
         initiated_at,
         address,
-        sentTo: motoboyCloser.motoboy
-          ? motoboyCloser.motoboy.firebaseNotificationToken
+        sentTo: driverCloser.driver
+          ? driverCloser.driver.firebaseNotificationToken
           : "all",
       });
 
@@ -82,24 +82,24 @@ module.exports = {
   },
 
   async goToCompanyRace(request, response) {
-    const { motoboy, raceId } = request.body;
+    const { driver, raceId } = request.body;
 
     try {
       const race = await Race.updateOne(
         { _id: raceId, status: "awaiting" },
-        { motoboy, status: "goToCompany" }
+        { driver, status: "goToCompany" }
       );
 
-      await Motoboy.update({ _id: motoboy }, { status: "delivering" });
+      await DriverController.update({ _id: driver }, { status: "delivering" });
 
       const _raceModified = await Race.findOne({ _id: raceId })
         .populate("company")
-        .populate("motoboy");
+        .populate("driver");
 
       if (_raceModified.company.firebaseNotificationToken !== "")
         await firebaseNotification.sendNotification(
           "Entrega iniciada",
-          `${_raceModified.motoboy.name} está vindo até você.`,
+          `${_raceModified.driver.name} está vindo até você.`,
           [_raceModified.company.firebaseNotificationToken],
           { code: 8001 }
         );
@@ -113,11 +113,11 @@ module.exports = {
   },
 
   async startRace(request, response) {
-    const { motoboy, raceId } = request.body;
+    const { driver, raceId } = request.body;
 
     try {
       const race = await Race.updateOne(
-        { _id: raceId, motoboy, status: "goToCompany" },
+        { _id: raceId, driver, status: "goToCompany" },
         { status: "inProgress" }
       );
 
@@ -128,24 +128,24 @@ module.exports = {
   },
 
   async finishRace(request, response) {
-    const { motoboy, raceId } = request.body;
+    const { driver, raceId } = request.body;
 
     try {
       const _raceModified = await Race.findOne({ _id: raceId })
         .populate("company")
-        .populate("motoboy");
+        .populate("driver");
 
       const race = await Race.updateOne(
-        { _id: raceId, motoboy, status: "inProgress" },
+        { _id: raceId, driver, status: "inProgress" },
         { status: "finished" }
       );
 
-      await Motoboy.updateOne({ _id: motoboy }, { status: "free" });
+      await Driver.updateOne({ _id: driver }, { status: "free" });
 
       if (_raceModified.company.firebaseNotificationToken !== "")
         await firebaseNotification.sendNotification(
           "Entrega concluída",
-          `${_raceModified.motoboy.name} finalizou a entrega para ${
+          `${_raceModified.driver.name} finalizou a entrega para ${
             _raceModified.address.street
           }${
             _raceModified.address.number
@@ -179,34 +179,34 @@ module.exports = {
   },
 
   async cancelRace(request, response) {
-    const { motoboy, raceId } = request.body;
+    const { driver, raceId } = request.body;
 
     try {
       const _raceModified = await Race.findOne({ _id: raceId })
         .populate("company")
-        .populate("motoboy");
+        .populate("driver");
 
       const race = await Race.updateOne(
         {
           _id: raceId,
-          motoboy,
+          driver,
           status: "goToCompany",
         },
-        { status: "awaiting", motoboy: null }
+        { status: "awaiting", driver: null }
       );
 
-      await Motoboy.updateOne({ _id: motoboy }, { status: "free" });
+      await Driver.updateOne({ _id: driver }, { status: "free" });
 
       if (_raceModified.company.firebaseNotificationToken !== "")
         await firebaseNotification.sendNotification(
           "Entrega cancelada",
-          `${_raceModified.motoboy.name} cancelou a entrega para ${
+          `${_raceModified.driver.name} cancelou a entrega para ${
             _raceModified.address.street
           }${
             _raceModified.address.number
               ? `, ${_raceModified.address.number}`
               : ``
-          }. Estamos buscando outro motoboy para você. ;)`,
+          }. Estamos buscando outro motorista para você. ;)`,
           [_raceModified.company.firebaseNotificationToken],
           { code: 7002 }
         );
@@ -221,7 +221,7 @@ module.exports = {
     try {
       const races = await Race.find({ status: "inProgress" })
         .populate("company")
-        .populate("motoboy");
+        .populate("driver");
       return races;
     } catch (err) {
       return [];
@@ -246,16 +246,16 @@ module.exports = {
     try {
       const race = await Race.updateOne({ _id: value._id }, { sentTo: "all" });
 
-      const motoboys = await MotoboyController.getConnectedMotoboys();
+      const driver = await DriverController.getConnectedDriver();
 
       const tokens = () => {
         const t = [];
-        for (let i = 0; i < motoboys.length; i++)
+        for (let i = 0; i < driver.length; i++)
           if (
-            motoboys[i].status === "free" &&
-            motoboys[i].firebaseNotificationToken !== value.sentTo
+            driver[i].status === "free" &&
+            driver[i].firebaseNotificationToken !== value.sentTo
           )
-            t.push(motoboys[i].firebaseNotificationToken);
+            t.push(driver[i].firebaseNotificationToken);
 
         return t;
       };

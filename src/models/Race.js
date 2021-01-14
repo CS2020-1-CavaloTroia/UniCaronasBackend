@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const RaceSchema = Schema({
   company: { type: Schema.Types.ObjectId, ref: "Company" },
-  motoboy: { type: Schema.Types.ObjectId, ref: "Motoboy" },
+  motoboy: { type: Schema.Types.ObjectId, ref: "Driver" },
   initialLocation: Object,
   finalLocation: Object,
   address: Object,
