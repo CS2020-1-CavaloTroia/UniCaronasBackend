@@ -3,12 +3,12 @@ const Driver = require("./../models/Driver");
 const firebaseNotification = require("../services/firebaseNotification");
 const maps = require("../services/maps");
 const DriverController = require("./DriverController");
-const Company = require("../models/Company");
+const Passenger = require("../models/Passenger");
 
 module.exports = {
   async create(request, response) {
     const {
-      company,
+      passenger,
       initialLocation,
       finalLocation,
       route,
@@ -19,7 +19,7 @@ module.exports = {
     } = request.body;
 
     try {
-      const _company = await Company.findOne({ _id: company });
+      const _passenger = await Passenger.findOne({ _id: passenger });
 
       const driver = await DriverController.getConnecteddriver();
 
@@ -53,7 +53,7 @@ module.exports = {
       if (driverCloser.driver)
         await firebaseNotification.sendNotification(
           `${driverCloser.driver.name},`,
-          `${_company.name} solicitou uma nova entrega para ${address.street}${
+          `${_passenger.name} solicitou uma nova entrega para ${address.street}${
             address.number ? `, ${address.number}` : ``
           }`,
           [driverCloser.driver.firebaseNotificationToken],
@@ -61,7 +61,7 @@ module.exports = {
         );
 
       const race = await Race.create({
-        company,
+        passenger,
         initialLocation,
         finalLocation,
         route,
@@ -81,26 +81,26 @@ module.exports = {
     }
   },
 
-  async goToCompanyRace(request, response) {
-    const { driver, raceId } = request.body;
+  async goToPassenger(request, response) {
+    const { motoboy, raceId } = request.body;
 
     try {
       const race = await Race.updateOne(
         { _id: raceId, status: "awaiting" },
-        { driver, status: "goToCompany" }
+        { driver, status: "goToPassenger" }
       );
 
       await DriverController.update({ _id: driver }, { status: "delivering" });
 
       const _raceModified = await Race.findOne({ _id: raceId })
-        .populate("company")
+        .populate("passenger")
         .populate("driver");
 
-      if (_raceModified.company.firebaseNotificationToken !== "")
+      if (_raceModified.passenger.firebaseNotificationToken !== "")
         await firebaseNotification.sendNotification(
-          "Entrega iniciada",
-          `${_raceModified.driver.name} está vindo até você.`,
-          [_raceModified.company.firebaseNotificationToken],
+          "Carona iniciada",
+          `${_raceModified.motoboy.name} está vindo até você.`,
+          [_raceModified.passenger.firebaseNotificationToken],
           { code: 8001 }
         );
 
@@ -117,7 +117,7 @@ module.exports = {
 
     try {
       const race = await Race.updateOne(
-        { _id: raceId, driver, status: "goToCompany" },
+        { _id: raceId, driver, status: "goToPassenger" },
         { status: "inProgress" }
       );
 
@@ -132,7 +132,7 @@ module.exports = {
 
     try {
       const _raceModified = await Race.findOne({ _id: raceId })
-        .populate("company")
+        .populate("passenger")
         .populate("driver");
 
       const race = await Race.updateOne(
@@ -142,7 +142,7 @@ module.exports = {
 
       await Driver.updateOne({ _id: driver }, { status: "free" });
 
-      if (_raceModified.company.firebaseNotificationToken !== "")
+      if (_raceModified.passenger.firebaseNotificationToken !== "")
         await firebaseNotification.sendNotification(
           "Entrega concluída",
           `${_raceModified.driver.name} finalizou a entrega para ${
@@ -152,7 +152,7 @@ module.exports = {
               ? `, ${_raceModified.address.number}`
               : ``
           }.`,
-          [_raceModified.company.firebaseNotificationToken],
+          [_raceModified.passenger.firebaseNotificationToken],
           { code: 8003 }
         );
 
@@ -163,12 +163,12 @@ module.exports = {
   },
 
   async removeRace(request, response) {
-    const { company, raceId } = request.body;
+    const { passenger, raceId } = request.body;
 
     try {
       const race = await Race.deleteOne({
         _id: raceId,
-        company,
+        passenger,
         status: "awaiting",
       });
 
@@ -183,21 +183,21 @@ module.exports = {
 
     try {
       const _raceModified = await Race.findOne({ _id: raceId })
-        .populate("company")
+        .populate("passenger")
         .populate("driver");
 
       const race = await Race.updateOne(
         {
           _id: raceId,
           driver,
-          status: "goToCompany",
+          status: "goToPassenger",
         },
         { status: "awaiting", driver: null }
       );
 
       await Driver.updateOne({ _id: driver }, { status: "free" });
 
-      if (_raceModified.company.firebaseNotificationToken !== "")
+      if (_raceModified.passenger.firebaseNotificationToken !== "")
         await firebaseNotification.sendNotification(
           "Entrega cancelada",
           `${_raceModified.driver.name} cancelou a entrega para ${
@@ -220,7 +220,7 @@ module.exports = {
   async getInProgressRaces() {
     try {
       const races = await Race.find({ status: "inProgress" })
-        .populate("company")
+        .populate("passenger")
         .populate("driver");
       return races;
     } catch (err) {
@@ -230,7 +230,7 @@ module.exports = {
 
   async getAwaitingRaces() {
     try {
-      const races = await Race.find({ status: "awaiting" }).populate("company");
+      const races = await Race.find({ status: "awaiting" }).populate("passenger");
       return races;
     } catch (err) {
       return [];
@@ -239,7 +239,7 @@ module.exports = {
 
   async resendNotificationForAwaintingRaces(
     value,
-    _company,
+    _passenger,
     address,
     lastToken
   ) {
@@ -261,8 +261,8 @@ module.exports = {
       };
 
       await firebaseNotification.sendNotification(
-        `Nova corrida`,
-        `${value.company.name} solicitou uma nova entrega para ${
+        `Nova carona`,
+        `${value.passenger.name} solicitou uma nova carona para ${
           value.address.street
         }${value.address.number ? `, ${value.address.number}` : ``}`,
         tokens(),

@@ -165,7 +165,7 @@ module.exports = {
             driver,
           },
           {
-            status: "goToPassengerLocal",
+            status: "goToPassenger",
             driver,
           },
         ],
