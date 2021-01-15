@@ -29,7 +29,7 @@ podem oferecer caronas, visualizá-las ou solicitá-las a um motorista.
 
 >Projeto desenvolvido durante o curso de Construção de Software da Universidade Federal de Goiás.
 
-> Obs: Este repositório contempla apenas o <strong>Backend</strong> do projeto!
+> Obs: Este repositório contempla apenas o <strong>Backend</strong> do projeto!</br>
 FRONT-END (mobile) DISPONÍVEL EM: https://github.com/CS2020-1-CavaloTroia/UniCaronasMobile
 
 ## 📱 Funcionalidades
@@ -73,11 +73,11 @@ Também será  utilizado MongoDB Atlas para a base de dados juntamente com Herok
 ### Arquitetura
 
 - [ ] Diagrama Arquitetural
-<img src="https://raw.githubusercontent.com/CS2020-1-CavaloTroia/UniCaronas/master/arquitetura_UniCaronas.png" width="800">
+<img src="https://github.com/CS2020-1-CavaloTroia/UniCaronas/blob/master/readme_images/arquitetura_UniCaronas.png" width="800">
 
 - [ ] Diagrama de Tecnologias
 
-<img src="https://raw.githubusercontent.com/CS2020-1-CavaloTroia/UniCaronas/master/tecnologias_UniCaronas.png" width="800">
+<img src="https://github.com/CS2020-1-CavaloTroia/UniCaronas/blob/master/readme_images/tecnologias_UniCaronas.png" width="800">
 
 ### Pré-requisitos
 
