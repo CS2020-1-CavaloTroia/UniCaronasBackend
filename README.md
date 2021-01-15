@@ -46,14 +46,14 @@ https://github.com/CS2020-1-CavaloTroia/UniCaronas
 
 ## 🛠 Tecnologias
 
-### Backend
+## Backend
 - Node JS
 - MondoDB Atlas
 - Heroku
 
 Para o back-end da aplicação será utilizado NodeJS, que contempla ambiente de execução Javascript server-side construído no motor V8 do Chrome.
 
-## Frontend
+### Frontend
 - JavaScript
 - React Native 0.63.3
 
