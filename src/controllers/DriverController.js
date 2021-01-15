@@ -37,6 +37,10 @@ module.exports = {
       const formattedDriver = { ...driver._doc };
       formattedDriver.token = token;
 
+      if (response === "test"){
+        return formattedDriver;
+      }
+
       return response.json(formattedDriver);
     } catch (err) {
       if (err.code === 11000) {
@@ -54,6 +58,10 @@ module.exports = {
           const formattedDriver = { ...driver._doc };
           formattedDriver.token = token;
 
+          if (response === "test"){
+
+            return formattedDriver;
+          }
           return response.json(formattedDriver);
         }
         // User unauthorized
@@ -73,6 +81,10 @@ module.exports = {
         phoneNumber,
         googleUID,
       });
+
+      if (response === "test"){
+        return user;
+      }
 
       return response.json(user);
     } catch (err) {
