@@ -30,7 +30,6 @@ podem oferecer caronas, visualizá-las ou solicitá-las a um motorista.
 >Projeto desenvolvido durante o curso de Construção de Software da Universidade Federal de Goiás.
 
 > Obs: Este repositório contempla apenas o <strong>Backend</strong> do projeto!
-
 FRONT-END (mobile) DISPONÍVEL EM: https://github.com/CS2020-1-CavaloTroia/UniCaronasMobile
 
 ## 📱 Funcionalidades
@@ -42,18 +41,9 @@ FRONT-END (mobile) DISPONÍVEL EM: https://github.com/CS2020-1-CavaloTroia/UniCa
 
 ## 🎨 Layout
 
-Realizamos a contrução de wireframes para o projeto, que pode ser encontrado neste repositório na pasta /wireframes
+Realizamos a contrução de wireframes para o projeto, que pode ser encontrado no repositório UniCaronasMobile, na pasta /wireframes
 
 ## 🛠 Tecnologias
-
-### Frontend
-- JavaScript
-- React Native 0.63.3
-
-Para o front-end da aplicação será utilizada a linguagem JavaScript juntamente  React Native 0.63. Se tratando de uma aplicação mobile,  as tecnologias citadas apresentam vários componentes que auxiliarão no desenvolvimento de uma aplicação de qualidade.
-
-Será utilizada uma REST - API para a comunicação com o server side.
-
 
 ### Backend
 - Node JS
@@ -61,6 +51,14 @@ Será utilizada uma REST - API para a comunicação com o server side.
 - Heroku
 
 Para o back-end da aplicação será utilizado NodeJS, que contempla ambiente de execução Javascript server-side construído no motor V8 do Chrome.
+
+## Frontend
+- JavaScript
+- React Native 0.63.3
+
+Para o front-end da aplicação será utilizada a linguagem JavaScript juntamente  React Native 0.63. Se tratando de uma aplicação mobile,  as tecnologias citadas apresentam vários componentes que auxiliarão no desenvolvimento de uma aplicação de qualidade.
+
+Será utilizada uma REST - API para a comunicação com o server side.
 
 Também será  utilizado MongoDB Atlas para a base de dados juntamente com Heroku, que é uma plataforma em nuvem (PaaS - Platform as a service) que suporta várias tecnologias para a hospedagem de aplicações.
 
@@ -83,17 +81,13 @@ Também será  utilizado MongoDB Atlas para a base de dados juntamente com Herok
 ### Pré-requisitos
 
 Antes de dar início, certifique-se que tenha em sua máquina:
+- [ ] A parte FrontEnd do Projeto, disponível em: https://github.com/CS2020-1-CavaloTroia/UniCaronasMobile
 - [ ] Banco de dados MongoBD
 - [ ] Node.js versão 14.15.4 LTS ou superior
 - [ ] Node versão 10.16 ou superior
 - [ ] Yarn versão 1.22.4 ou superior
 
 Além disso, é bom ter um editor para trabalhar com o código, como [VSCode](https://code.visualstudio.com/).
-
-#### Instalando o React Native
-
-- [ ] Siga os passos no site do [React Native](https://reactnative.dev/docs/0.61/getting-started)
-- [ ] Selecione o tipo de instalação **React Native CLI Quickstart** e o seu sistema operacional
 
 ### Rodando o Backend
 
