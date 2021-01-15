@@ -57,9 +57,12 @@ module.exports = {
           formattedDriver.token = token;
 
           if (response === "test") {
+            return formattedDriver;
           }
           return response.json(formattedDriver);
-        } else return response.status(401).json("User authenticated");
+        }
+        // User unauthorized
+        else return response.status(401).json("User authenticated");
       }
 
       return response.status(500).json("Internal server error");
@@ -106,6 +109,8 @@ module.exports = {
     const { _id, latitude, longitude, heading, speed } = request.body[0];
     const lastTimeOnline = new Date();
 
+    console.log(_id);
+
     // if (speed > 2)
     try {
       const driver = await Driver.updateOne(
@@ -118,6 +123,7 @@ module.exports = {
           lastTimeOnline: lastTimeOnline.getTime(),
         }
       );
+      console.log(driver);
       return response.json(driver);
     } catch (err) {
       return response.status(500);
