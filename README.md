@@ -41,7 +41,8 @@ FRONT-END (mobile) DISPONÍVEL EM: https://github.com/CS2020-1-CavaloTroia/UniCa
 
 ## 🎨 Layout
 
-Realizamos a contrução de wireframes para o projeto, que pode ser encontrado no repositório UniCaronasMobile, na pasta /wireframes
+Realizamos a contrução de wireframes para o projeto, que pode ser encontrado no repositório UniCaronas, na pasta <strong>/wireframes</strong>.
+https://github.com/CS2020-1-CavaloTroia/UniCaronas
 
 ## 🛠 Tecnologias
 
@@ -62,7 +63,7 @@ Será utilizada uma REST - API para a comunicação com o server side.
 
 Também será  utilizado MongoDB Atlas para a base de dados juntamente com Heroku, que é uma plataforma em nuvem (PaaS - Platform as a service) que suporta várias tecnologias para a hospedagem de aplicações.
 
-- [ ] React Native versão xx
+- [ ] React Native 
 - [ ] Node.js versão 14.15.4 LTS
 - [ ] MongoDB 
 - [ ] Heroku 
@@ -95,24 +96,16 @@ Além disso, é bom ter um editor para trabalhar com o código, como [VSCode](ht
 Clone este repositório
 $ git clone https://github.com/CS2020-1-CavaloTroia/UniCaronas
 
-Acesse a pasta do projeto no seu terminal/cmd
-$ cd server/UniCaronas
-
-Para o Linux, necessário instalar o pip
-$ apt install python3-pip
+Acesse a pasta do projeto backend no seu terminal/cmd
+$ cd UniCaronasBackend
 
 Instale as dependências
-$ pip install Django==3.1.2 djangorestframework pyyaml django-rest-swagger dnspython djongo
-
-Execute a criação do banco de dados
-$ python manage.py migrate
+$ npm install
 
 Execute a aplicação
-$ python manage.py runserver
+$ yarn start
 
-A aplicação será aberta na porta:8000 - acesse http://localhost:8000
-Caso queira especificar a porta utilize
-$ python manage.py runserver <port>
+A aplicação será aberta na porta:3333  - acesse http://localhost:3333
 ```
 
 ## 💡 Como contribuir
