@@ -7,10 +7,8 @@ const Driver = require("./../models/Driver");
 const Race = require("./../models/Race");
 
 module.exports = {
-
   // Cadastra o motorista
   async signin(request, response) {
-
     // const thumbnail = request.file.filename;
     const { name, phoneNumber, googleUID } = request.body;
     const lastTimeOnline = new Date();
@@ -37,12 +35,16 @@ module.exports = {
       const formattedDriver = { ...driver._doc };
       formattedDriver.token = token;
 
+      if (response === "test") {
+        return formattedDriver;
+      }
+
       return response.json(formattedDriver);
     } catch (err) {
       if (err.code === 11000) {
         await Driver.updateOne(
           { phoneNumber, googleUID },
-          { name, online: false, status: "free"}
+          { name, online: false, status: "free" }
         );
         const driver = await Driver.findOne({ phoneNumber, googleUID });
 
@@ -54,10 +56,10 @@ module.exports = {
           const formattedDriver = { ...driver._doc };
           formattedDriver.token = token;
 
+          if (response === "test") {
+          }
           return response.json(formattedDriver);
-        }
-        // User unauthorized
-        else return response.status(401).json("User authenticated");
+        } else return response.status(401).json("User authenticated");
       }
 
       return response.status(500).json("Internal server error");
@@ -73,6 +75,10 @@ module.exports = {
         phoneNumber,
         googleUID,
       });
+
+      if (response === "test") {
+        return user;
+      }
 
       return response.json(user);
     } catch (err) {
@@ -131,7 +137,6 @@ module.exports = {
       return response.status(500);
     }
   },
-
 
   // Retorna os motoristas disponíveis
   async getOnlineDrivers(request, response) {
