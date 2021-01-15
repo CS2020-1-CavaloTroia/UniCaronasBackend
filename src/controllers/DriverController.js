@@ -7,10 +7,8 @@ const Driver = require("./../models/Driver");
 const Race = require("./../models/Race");
 
 module.exports = {
-
   // Cadastra o motorista
   async signin(request, response) {
-
     // const thumbnail = request.file.filename;
     const { name, phoneNumber, googleUID } = request.body;
     const lastTimeOnline = new Date();
@@ -37,7 +35,7 @@ module.exports = {
       const formattedDriver = { ...driver._doc };
       formattedDriver.token = token;
 
-      if (response === "test"){
+      if (response === "test") {
         return formattedDriver;
       }
 
@@ -46,7 +44,7 @@ module.exports = {
       if (err.code === 11000) {
         await Driver.updateOne(
           { phoneNumber, googleUID },
-          { name, online: false, status: "free"}
+          { name, online: false, status: "free" }
         );
         const driver = await Driver.findOne({ phoneNumber, googleUID });
 
@@ -58,8 +56,7 @@ module.exports = {
           const formattedDriver = { ...driver._doc };
           formattedDriver.token = token;
 
-          if (response === "test"){
-
+          if (response === "test") {
             return formattedDriver;
           }
           return response.json(formattedDriver);
@@ -82,7 +79,7 @@ module.exports = {
         googleUID,
       });
 
-      if (response === "test"){
+      if (response === "test") {
         return user;
       }
 
@@ -112,6 +109,8 @@ module.exports = {
     const { _id, latitude, longitude, heading, speed } = request.body[0];
     const lastTimeOnline = new Date();
 
+    console.log(_id);
+
     // if (speed > 2)
     try {
       const driver = await Driver.updateOne(
@@ -124,6 +123,7 @@ module.exports = {
           lastTimeOnline: lastTimeOnline.getTime(),
         }
       );
+      console.log(driver);
       return response.json(driver);
     } catch (err) {
       return response.status(500);
@@ -143,7 +143,6 @@ module.exports = {
       return response.status(500);
     }
   },
-
 
   // Retorna os motoristas disponíveis
   async getOnlineDrivers(request, response) {
